@@ -46,7 +46,35 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none; z-index: 9999; opacity: .4;
 }
-
+/* ── LIGHTBOX ── */
+.lightbox {
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(0,0,0,.92);
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s ease;
+}
+.lightbox.active { opacity: 1; pointer-events: all; }
+.lightbox img {
+  max-width: 90vw; max-height: 85vh;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 40px 100px rgba(0,0,0,.6);
+  transform: scale(.92);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.lightbox.active img { transform: scale(1); }
+.lightbox-close {
+  position: absolute; top: 1.25rem; right: 1.25rem;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--trans);
+}
+.lightbox-close:hover { background: var(--accent2); color: #fff; }
+.cert-img-wrap { cursor: zoom-in; }
 /* ── SCROLLBAR ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -616,7 +644,7 @@ footer span { color: var(--accent); }
 
         <!-- CERT 1 -->
         <div class="cert-card">
-          <div class="cert-img-wrap">
+<div class="cert-img-wrap" onclick="openLightbox(this)">
              <img src="hcia routing&switching.png" alt="HCIA">
           </div>
           <div class="cert-body">
@@ -811,7 +839,11 @@ footer span { color: var(--accent); }
 
   </div>
 </section>
-
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="Certificate">
+</div>
 <!-- ── PROJECT MODAL ── -->
 <div class="modal-overlay" id="projectModal" onclick="closeProjectModal(event)">
   <div class="modal" id="modalContent">
@@ -1272,7 +1304,20 @@ const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }});
 }, { threshold: 0.1 });
 fadeEls.forEach(el => io.observe(el));
-
+/* ── LIGHTBOX ── */
+function openLightbox(wrap) {
+  const img = wrap.querySelector('img');
+  if (!img) return; // no image to show if only emoji placeholder
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox({target: document.getElementById('lightbox')}); }});
 /* ── ACTIVE NAV HIGHLIGHT ── */
 const sections = document.querySelectorAll('section[id]');
 window.addEventListener('scroll', () => {
