@@ -83,6 +83,7 @@ a{color:inherit;text-decoration:none}
 .tabs-bar{
   display:flex;gap:.5rem;padding:1.5rem 2rem .5rem;
   border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
 }
 .tab-btn{
   font-family:var(--mono);font-size:.78rem;padding:.55rem 1.2rem;border-radius:999px;
@@ -173,7 +174,6 @@ a{color:inherit;text-decoration:none}
 }
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
 .field textarea{min-height:100px}
-.field-hint{font-family:var(--mono);font-size:.67rem;color:var(--muted);margin-top:.35rem}
 
 /* tags input */
 .tags-input-wrap{
@@ -252,22 +252,6 @@ a{color:inherit;text-decoration:none}
 }
 .btn-confirm-no:hover{color:var(--text)}
 
-/* ── CERT IMAGE PREVIEW ── */
-.img-preview-wrap{
-  margin-top:.5rem;border-radius:10px;overflow:hidden;
-  background:var(--card);border:1px solid var(--border);
-  height:140px;display:flex;align-items:center;justify-content:center;
-}
-.img-preview-wrap img{max-width:100%;max-height:140px;object-fit:contain}
-.img-preview-placeholder{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
-
-/* ── EMPTY STATE ── */
-.empty-state{
-  text-align:center;padding:4rem 2rem;
-  font-family:var(--mono);font-size:.82rem;color:var(--muted);
-}
-.empty-state .es-icon{font-size:3rem;margin-bottom:1rem}
-
 /* ── DETAIL FIELDS (projects) ── */
 .detail-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 @media(max-width:600px){
@@ -301,13 +285,25 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <div class="tabs-bar">
-    <button class="tab-btn active" onclick="switchTab('certs')">🏆 Certificates</button>
+    <button class="tab-btn active" onclick="switchTab('stats')">📊 Stats</button>
+    <button class="tab-btn" onclick="switchTab('certs')">🏆 Certificates</button>
     <button class="tab-btn" onclick="switchTab('projects')">🛠 Projects</button>
     <button class="tab-btn" onclick="switchTab('labs')">🧪 Labs</button>
   </div>
 
+  <!-- STATS PANEL -->
+  <div class="panel active" id="panel-stats">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Manage <span>Stats</span></div>
+      </div>
+      <button class="btn-add" onclick="openStatForm()">+ Add Stat</button>
+    </div>
+    <div class="items-list" id="statsList"></div>
+  </div>
+
   <!-- CERTS PANEL -->
-  <div class="panel active" id="panel-certs">
+  <div class="panel" id="panel-certs">
     <div class="panel-header">
       <div>
         <div class="panel-title">Manage <span>Certificates</span></div>
@@ -340,6 +336,29 @@ a{color:inherit;text-decoration:none}
   </div>
 </div>
 
+<!-- ── STAT MODAL ── -->
+<div class="modal-bg" id="statModal" onclick="closeBgClick(event,'statModal')">
+  <div class="modal-form">
+    <button class="mf-close" onclick="closeModal('statModal')">✕</button>
+    <div class="mf-title" id="statModalTitle">Add Stat</div>
+    <input type="hidden" id="statEditIdx" value="-1">
+
+    <div class="field">
+      <label>Label</label>
+      <input type="text" id="stat_label" placeholder="e.g. Projects">
+    </div>
+    <div class="field">
+      <label>Value</label>
+      <input type="text" id="stat_value" placeholder="e.g. 15+">
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal('statModal')">Cancel</button>
+      <button class="btn-save" onclick="saveStat()">Save Stat</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── CERT MODAL ── -->
 <div class="modal-bg" id="certModal" onclick="closeBgClick(event,'certModal')">
   <div class="modal-form">
@@ -356,19 +375,16 @@ a{color:inherit;text-decoration:none}
       <input type="text" id="cert_issuer" placeholder="e.g. Cisco">
     </div>
     <div class="field">
-      <label>Date (optional)</label>
+      <label>Date</label>
       <input type="text" id="cert_date" placeholder="e.g. Aug 2023">
     </div>
     <div class="field">
-      <label>Image filename <span style="color:var(--muted)">(file must be in same folder)</span></label>
-      <input type="text" id="cert_img" placeholder="e.g. CCNA.png" oninput="previewCertImg()">
-      <div class="img-preview-wrap" id="certImgPreview">
-        <span class="img-preview-placeholder">Image preview</span>
-      </div>
+      <label>Image Link (optional)</label>
+      <input type="text" id="cert_image" placeholder="https://...">
     </div>
     <div class="field">
-      <label>Badge label (optional)</label>
-      <input type="text" id="cert_badge" placeholder="e.g. 2024">
+      <label>Emoji (if no image)</label>
+      <input type="text" id="cert_emoji" placeholder="🏆">
     </div>
 
     <div class="form-actions">
@@ -422,7 +438,8 @@ a{color:inherit;text-decoration:none}
     </div>
     <div class="field">
       <label>Video Link</label>
-      <input type="text" id="proj_videoLink" placeholder="https://...">
+      <input type="text" id="proj_videoLink" placeholder="https://youtube.com/... or https://example.com/video.mp4">
+      <div style="font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:.35rem">Supports: YouTube, Vimeo, direct video files (mp4/webm)</div>
     </div>
 
     <div class="form-actions">
@@ -497,330 +514,405 @@ a{color:inherit;text-decoration:none}
 /* ════════════════════════════════════════
    CONSTANTS & PASSWORD
 ════════════════════════════════════════ */
-const PASSWORD = "Omar2025!";   // ← CHANGE THIS
+const PASSWORD = "Omar2025!";
 
 /* ════════════════════════════════════════
-   AUTH
+   LOCAL STORAGE HELPERS
 ════════════════════════════════════════ */
-function doLogin(){
-  const v = document.getElementById('pwdInput').value;
-  if(v === PASSWORD){
-    sessionStorage.setItem('adminAuth','1');
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('app').style.display='block';
-    renderAll();
-  } else {
-    document.getElementById('loginErr').style.display='block';
-    document.getElementById('pwdInput').value='';
+function getData(key, defaultVal = []) {
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : defaultVal;
+  } catch {
+    return defaultVal;
   }
 }
-function doLogout(){
+function setData(key, val) {
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+    return true;
+  } catch {
+    return false;
+  }
+}
+function getStats() {
+  try {
+    return JSON.parse(localStorage.getItem('porto_stats')) || {};
+  } catch {
+    return {};
+  }
+}
+function getCerts() { return getData('porto_certs', []); }
+function getProjects() { return getData('porto_projects', []); }
+function getLabs() { return getData('porto_labs', []); }
+
+/* ════════════════════════════════════════
+   LOGIN / LOGOUT
+════════════════════════════════════════ */
+function doLogin() {
+  const pwd = document.getElementById('pwdInput').value;
+  if (pwd === PASSWORD) {
+    sessionStorage.setItem('adminAuth', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderAll();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('loginErr').style.display = 'none';
+      document.getElementById('pwdInput').value = '';
+    }, 2000);
+  }
+}
+function doLogout() {
   sessionStorage.removeItem('adminAuth');
   location.reload();
 }
-if(sessionStorage.getItem('adminAuth')==='1'){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('app').style.display='block';
+
+/* ════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════ */
+function switchTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
 }
 
 /* ════════════════════════════════════════
-   DEFAULT DATA (mirrors index.html)
+   RENDER ALL
 ════════════════════════════════════════ */
-const DEFAULT_CERTS = [
-  {title:"CCNA",issuer:"Cisco",date:"",img:"CCNA.png",badge:""},
-  {title:"Network Security",issuer:"Cisco",date:"",img:"Na Security.png",badge:""},
-  {title:"HCIA Routing & Switching",issuer:"Huawei",date:"Aug 2022",img:"hcia routing&switching.png",badge:""},
-  {title:"HCIA Security",issuer:"Huawei",date:"Aug 2023",img:"HCIA Security.jpeg",badge:""},
-  {title:"Red Hat System Administration I",issuer:"Red Hat Academy",date:"Apr 2026",img:"RedHat.png",badge:""},
-  {title:"NTI Summer Training",issuer:"NTI",date:"Jul 2023",img:"NTI tranning.png",badge:""},
-  {title:"ITI Bootcamp",issuer:"ITI",date:"Nov 2024",img:"ITI.png",badge:""}
-];
-
-const DEFAULT_PROJECTS = [
-  {title:"Custom SIEM Dashboard",emoji:"🖥️",shortDesc:"Real-time security event correlation and visualization platform built on the ELK stack with custom alerting rules.",desc:"Built a production-grade SIEM dashboard by extending the ELK Stack with custom Python ingestors and a Flask-based frontend. The system ingests logs from Syslog, Windows Event Logs, and custom application sources. Includes 15+ correlation rules for detecting brute-force, lateral movement, and data exfiltration attempts in real-time.",tags:["Python","ELK","SOC"],details:{"Duration":"3 months","Team Size":"Solo","Status":"Production","Stack":"Python · ELK · Docker"},videoDesc:"Full walkthrough: ingestion pipeline → alert firing → incident ticket creation",videoLink:"#"},
-  {title:"Network Anomaly Detector",emoji:"🔍",shortDesc:"ML-powered network traffic analyzer that detects anomalous patterns using unsupervised learning on pcap data.",desc:"Developed a machine learning pipeline that analyzes NetFlow/pcap data to detect anomalous network behavior. Uses Isolation Forest and LSTM autoencoders to flag unusual traffic patterns.",tags:["Python","ML","Network"],details:{"Accuracy":"94% detection","False Positive":"< 2%","Dataset":"CICIDS2017","Model":"Isolation Forest + LSTM"},videoDesc:"Demo showing live traffic capture, model inference, and alert generation dashboard",videoLink:"#"},
-  {title:"Encrypted File Vault CLI",emoji:"🔐",shortDesc:"Command-line tool for AES-256-GCM file encryption with key management and secure deletion capabilities.",desc:"A command-line vault tool written in Go that encrypts files and directories using AES-256-GCM. Key derivation uses Argon2id with tunable parameters. Supports secure deletion, key rotation, and encrypted metadata headers.",tags:["Go","Crypto","CLI"],details:{"Language":"Go 1.22","Cipher":"AES-256-GCM","KDF":"Argon2id","Platforms":"Win / Mac / Linux"},videoDesc:"Terminal demo: encrypting a sensitive directory and key rotation workflow",videoLink:"#"},
-  {title:"Web App Pentest Report",emoji:"🌐",shortDesc:"Full-scope web application penetration test covering OWASP Top 10 vulnerabilities with detailed remediation guidance.",desc:"Conducted a full-scope black-box penetration test of a client's e-commerce platform. Identified 23 vulnerabilities including a critical SQL injection, stored XSS, and broken access control. Delivered a 47-page professional report.",tags:["Burp","OWASP","Report"],details:{"Scope":"Full Black-Box","Vulns Found":"23 (4 Critical)","Duration":"2 weeks","Report":"47 pages"},videoDesc:"Redacted walkthrough of the critical SQLi exploitation chain",videoLink:"#"},
-  {title:"OSINT Automation Framework",emoji:"🤖",shortDesc:"Automated intelligence gathering tool that aggregates data from Shodan, VirusTotal, and WHOIS for threat profiling.",desc:"Modular Python framework that automates passive and active OSINT collection for threat intelligence operations. Integrates 8 APIs into a unified pipeline with deduplication and enrichment.",tags:["Python","OSINT","CTI"],details:{"APIs Integrated":"8 sources","Language":"Python 3.11","Output":"JSON + Maltego","Use Case":"CTI / Red Team Recon"},videoDesc:"Live OSINT run against a test target: from domain to full infrastructure map",videoLink:"#"},
-  {title:"Red Team Toolkit",emoji:"🏹",shortDesc:"Collection of offensive security scripts for reconnaissance, lateral movement simulation, and post-exploitation exercises.",desc:"Collection of 30+ offensive security scripts organized as a structured toolkit for authorized red team engagements. Covers initial access, persistence, lateral movement, and C2 beacon staging.",tags:["Bash","Red Team"],details:{"Scripts":"30+ modules","MITRE Coverage":"T1059, T1548, T1021…","Languages":"Bash / Python / PS1","Purpose":"Authorized Engagements"},videoDesc:"Sanitized demo of a full kill chain: phish → shell → domain admin",videoLink:"#"}
-];
-
-const DEFAULT_LABS = [
-  {icon:"🧪",title:"Active Directory Attack & Defense",platform:"TryHackMe",shortDesc:"Comprehensive lab covering AD enumeration, Kerberoasting, Pass-the-Hash and hardening techniques.",desc:"Comprehensive lab environment simulating a real enterprise Active Directory setup. Practiced full attack chains from external recon to domain compromise, then hardened the environment.",concepts:["Kerberoasting","Pass-the-Hash","BloodHound","DCSync","AS-REP Roasting","GPO Abuse","AD Hardening"],link:"https://tryhackme.com"},
-  {icon:"🌊",title:"Splunk: Zero to Power User",platform:"Splunk Boss of the SOC",shortDesc:"Threat hunting and log analysis challenges using real enterprise attack datasets in Splunk SIEM.",desc:"Competed in the Splunk BOTS dataset challenges. Analyzed real attack data from APT campaigns including credential theft, web shell deployment, and data exfiltration.",concepts:["SPL Queries","Threat Hunting","Log Correlation","MITRE ATT&CK Mapping","Dashboard Creation","Alert Tuning"],link:"https://splunk.com"},
-  {icon:"🕸️",title:"Web App Exploitation",platform:"HackTheBox / PortSwigger",shortDesc:"Solved 40+ web challenges covering SQLi, XSS, SSRF, IDOR, and advanced deserialization attacks.",desc:"Solved 40+ web security challenges across HackTheBox and PortSwigger Web Security Academy covering all OWASP Top 10 categories plus advanced topics like deserialization.",concepts:["SQL Injection","XSS (Stored/Reflected/DOM)","SSRF","IDOR","JWT Attacks","Deserialization","Path Traversal"],link:"https://portswigger.net/web-security"},
-  {icon:"🔬",title:"Malware Analysis Fundamentals",platform:"ANY.RUN / Malware Traffic",shortDesc:"Static and dynamic malware analysis using sandbox environments, Ghidra, and network forensics.",desc:"Analyzed 20+ real malware samples including ransomware, RATs, and infostealers using both static analysis in Ghidra and dynamic sandbox analysis in ANY.RUN.",concepts:["Static Analysis","Dynamic Sandboxing","Ghidra Disassembly","YARA Rules","IOC Extraction","C2 Identification","Network Forensics"],link:"https://any.run"},
-  {icon:"☁️",title:"Cloud Security Misconfiguration",platform:"CloudGoat / AWS",shortDesc:"Exploited intentionally vulnerable AWS environments to understand real-world cloud attack paths and IAM misconfigs.",desc:"Used Rhino Security's CloudGoat to practice exploiting realistic AWS misconfigurations, from overprivileged IAM roles to public S3 buckets and Lambda injection.",concepts:["IAM Privilege Escalation","S3 Bucket Exposure","Lambda Injection","SSRF → IMDS","CloudTrail Evasion","Secrets Manager"],link:"https://github.com/RhinoSecurityLabs/cloudgoat"},
-  {icon:"🔑",title:"Network Forensics & Packet Analysis",platform:"Blue Team Labs Online",shortDesc:"Analyzed real attack pcap files to reconstruct attack timelines, extract credentials and detect C2 traffic.",desc:"Reconstructed attack timelines from packet captures including credential extraction from cleartext protocols, identifying C2 beacons, and detecting data exfiltration over DNS.",concepts:["Wireshark Filters","Protocol Analysis","Credential Extraction","C2 Beacon Detection","DNS Tunneling","TLS Decryption","Tshark Scripting"],link:"https://blueteamlabs.online"}
-];
-
-/* ════════════════════════════════════════
-   DATA STORE (localStorage)
-════════════════════════════════════════ */
-function getData(key, def){ 
-  try{ const v=localStorage.getItem(key); return v?JSON.parse(v):JSON.parse(JSON.stringify(def)); }
-  catch(e){ return JSON.parse(JSON.stringify(def)); }
-}
-function setData(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-
-function getCerts()   { return getData('porto_certs',   DEFAULT_CERTS);    }
-function getProjects(){ return getData('porto_projects', DEFAULT_PROJECTS); }
-function getLabs()    { return getData('porto_labs',    DEFAULT_LABS);     }
-
-/* ════════════════════════════════════════
-   TABS
-════════════════════════════════════════ */
-function switchTab(name){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  document.getElementById('panel-'+name).classList.add('active');
+function renderAll() {
+  renderStats();
+  renderCerts();
+  renderProjects();
+  renderLabs();
 }
 
 /* ════════════════════════════════════════
-   RENDER LISTS
+   STAT MANAGEMENT
 ════════════════════════════════════════ */
-function renderAll(){ renderCerts(); renderProjects(); renderLabs(); }
-
-function renderCerts(){
-  const list = document.getElementById('certsList');
-  const data = getCerts();
-  if(!data.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">🏆</div>No certificates yet. Add one!</div>`; return; }
-  list.innerHTML = data.map((c,i)=>`
+function renderStats() {
+  const list = document.getElementById('statsList');
+  const stats = getStats();
+  if (!stats || Object.keys(stats).length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-family:var(--mono);font-size:.85rem">No stats yet</div>';
+    return;
+  }
+  list.innerHTML = Object.entries(stats).map(([label, value], idx) => `
     <div class="item-card">
       <div class="item-card-head">
         <div class="item-card-left">
-          <span class="item-num">#${i+1}</span>
+          <div class="item-num">${idx + 1}</div>
           <div>
-            <div class="item-name">${c.title}</div>
-            <div class="item-sub">${c.issuer}${c.date?' · '+c.date:''}</div>
+            <div class="item-name">${label}</div>
+            <div class="item-sub">${value}</div>
           </div>
         </div>
         <div class="item-actions">
-          <button class="btn-edit" onclick="openCertForm(${i})">Edit</button>
-          <button class="btn-del"  onclick="confirmDelete('cert',${i})">Delete</button>
+          <button class="btn-edit" onclick="editStat('${label}')">Edit</button>
+          <button class="btn-del" onclick="confirmDelete('stat','${label}')">Delete</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>
+  `).join('');
 }
 
-function renderProjects(){
-  const list = document.getElementById('projectsList');
-  const data = getProjects();
-  if(!data.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">🛠</div>No projects yet. Add one!</div>`; return; }
-  list.innerHTML = data.map((p,i)=>`
-    <div class="item-card">
-      <div class="item-card-head">
-        <div class="item-card-left">
-          <span class="item-num">#${i+1}</span>
-          <div>
-            <div class="item-name">${p.emoji||''} ${p.title}</div>
-            <div class="item-sub">${(p.tags||[]).join(' · ')}</div>
-          </div>
-        </div>
-        <div class="item-actions">
-          <button class="btn-edit" onclick="openProjectForm(${i})">Edit</button>
-          <button class="btn-del"  onclick="confirmDelete('project',${i})">Delete</button>
-        </div>
-      </div>
-    </div>`).join('');
+function openStatForm(label = null) {
+  document.getElementById('statEditIdx').value = label || '';
+  document.getElementById('statModalTitle').textContent = label ? 'Edit Stat' : 'Add Stat';
+  if (label) {
+    const stats = getStats();
+    document.getElementById('stat_label').value = label;
+    document.getElementById('stat_value').value = stats[label] || '';
+  } else {
+    document.getElementById('stat_label').value = '';
+    document.getElementById('stat_value').value = '';
+  }
+  openModal('statModal');
 }
 
-function renderLabs(){
-  const list = document.getElementById('labsList');
-  const data = getLabs();
-  if(!data.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">🧪</div>No labs yet. Add one!</div>`; return; }
-  list.innerHTML = data.map((l,i)=>`
-    <div class="item-card">
-      <div class="item-card-head">
-        <div class="item-card-left">
-          <span class="item-num">#${i+1}</span>
-          <div>
-            <div class="item-name">${l.icon||''} ${l.title}</div>
-            <div class="item-sub">${l.platform}</div>
-          </div>
-        </div>
-        <div class="item-actions">
-          <button class="btn-edit" onclick="openLabForm(${i})">Edit</button>
-          <button class="btn-del"  onclick="confirmDelete('lab',${i})">Delete</button>
-        </div>
-      </div>
-    </div>`).join('');
+function editStat(label) {
+  openStatForm(label);
+}
+
+function saveStat() {
+  const oldLabel = document.getElementById('statEditIdx').value;
+  const label = document.getElementById('stat_label').value.trim();
+  const value = document.getElementById('stat_value').value.trim();
+  
+  if (!label) { showToast('Label is required', 'error'); return; }
+  
+  let stats = getStats();
+  if (oldLabel && oldLabel !== label) {
+    delete stats[oldLabel];
+  }
+  stats[label] = value;
+  setData('porto_stats', stats);
+  closeModal('statModal');
+  renderStats();
+  showToast(oldLabel ? 'Stat updated ✓' : 'Stat added ✓', 'success');
 }
 
 /* ════════════════════════════════════════
    CERT FORM
 ════════════════════════════════════════ */
-function openCertForm(idx=-1){
-  document.getElementById('certEditIdx').value=idx;
-  document.getElementById('certModalTitle').textContent = idx===-1?'Add Certificate':'Edit Certificate';
-  if(idx>=0){
-    const c=getCerts()[idx];
-    document.getElementById('cert_title').value=c.title||'';
-    document.getElementById('cert_issuer').value=c.issuer||'';
-    document.getElementById('cert_date').value=c.date||'';
-    document.getElementById('cert_img').value=c.img||'';
-    document.getElementById('cert_badge').value=c.badge||'';
-    previewCertImg();
+function renderCerts() {
+  const list = document.getElementById('certsList');
+  const certs = getCerts();
+  if (certs.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-family:var(--mono);font-size:.85rem">No certificates yet</div>';
+    return;
+  }
+  list.innerHTML = certs.map((c, i) => `
+    <div class="item-card">
+      <div class="item-card-head">
+        <div class="item-card-left">
+          <div class="item-num">${i + 1}</div>
+          <div>
+            <div class="item-name">${c.title || ''}</div>
+            <div class="item-sub">${c.issuer || ''}</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openCertForm(${i})">Edit</button>
+          <button class="btn-del" onclick="confirmDelete('cert',${i})">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openCertForm(idx = -1) {
+  document.getElementById('certEditIdx').value = idx;
+  document.getElementById('certModalTitle').textContent = idx === -1 ? 'Add Certificate' : 'Edit Certificate';
+  if (idx >= 0) {
+    const c = getCerts()[idx];
+    document.getElementById('cert_title').value = c.title || '';
+    document.getElementById('cert_issuer').value = c.issuer || '';
+    document.getElementById('cert_date').value = c.date || '';
+    document.getElementById('cert_image').value = c.image || '';
+    document.getElementById('cert_emoji').value = c.emoji || '';
   } else {
-    ['cert_title','cert_issuer','cert_date','cert_img','cert_badge'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('certImgPreview').innerHTML='<span class="img-preview-placeholder">Image preview</span>';
+    ['cert_title', 'cert_issuer', 'cert_date', 'cert_image', 'cert_emoji'].forEach(id => document.getElementById(id).value = '');
   }
   openModal('certModal');
 }
-function previewCertImg(){
-  const val=document.getElementById('cert_img').value.trim();
-  const wrap=document.getElementById('certImgPreview');
-  if(val){ wrap.innerHTML=`<img src="${val}" onerror="this.parentElement.innerHTML='<span class=\\'img-preview-placeholder\\'>Image not found</span>'">`; }
-  else { wrap.innerHTML='<span class="img-preview-placeholder">Image preview</span>'; }
-}
-function saveCert(){
-  const title=document.getElementById('cert_title').value.trim();
-  if(!title){ showToast('Title is required','error'); return; }
-  const cert={
-    title, issuer:document.getElementById('cert_issuer').value.trim(),
-    date:document.getElementById('cert_date').value.trim(),
-    img:document.getElementById('cert_img').value.trim(),
-    badge:document.getElementById('cert_badge').value.trim()
+
+function saveCert() {
+  const title = document.getElementById('cert_title').value.trim();
+  if (!title) { showToast('Title is required', 'error'); return; }
+  const cert = {
+    title, issuer: document.getElementById('cert_issuer').value.trim(),
+    date: document.getElementById('cert_date').value.trim(),
+    image: document.getElementById('cert_image').value.trim(),
+    emoji: document.getElementById('cert_emoji').value.trim()
   };
-  const data=getCerts(); const idx=+document.getElementById('certEditIdx').value;
-  if(idx===-1) data.push(cert); else data[idx]=cert;
-  setData('porto_certs',data);
-  closeModal('certModal'); renderCerts();
-  showToast(idx===-1?'Certificate added ✓':'Certificate updated ✓','success');
+  const data = getCerts();
+  const idx = +document.getElementById('certEditIdx').value;
+  if (idx === -1) data.push(cert); else data[idx] = cert;
+  setData('porto_certs', data);
+  closeModal('certModal');
+  renderCerts();
+  showToast(idx === -1 ? 'Certificate added ✓' : 'Certificate updated ✓', 'success');
 }
 
 /* ════════════════════════════════════════
    PROJECT FORM
 ════════════════════════════════════════ */
-function openProjectForm(idx=-1){
-  document.getElementById('projEditIdx').value=idx;
-  document.getElementById('projectModalTitle').textContent=idx===-1?'Add Project':'Edit Project';
-  clearTags('projTagsWrap','projTagInput','proj_tags_data');
+function renderProjects() {
+  const list = document.getElementById('projectsList');
+  const projects = getProjects();
+  if (projects.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-family:var(--mono);font-size:.85rem">No projects yet</div>';
+    return;
+  }
+  list.innerHTML = projects.map((p, i) => `
+    <div class="item-card">
+      <div class="item-card-head">
+        <div class="item-card-left">
+          <div class="item-num">${i + 1}</div>
+          <div>
+            <div class="item-name">${p.title || ''}</div>
+            <div class="item-sub">${p.shortDesc || p.desc || ''}</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openProjectForm(${i})">Edit</button>
+          <button class="btn-del" onclick="confirmDelete('project',${i})">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProjectForm(idx = -1) {
+  document.getElementById('projEditIdx').value = idx;
+  document.getElementById('projectModalTitle').textContent = idx === -1 ? 'Add Project' : 'Edit Project';
   clearDetailRows('projDetailsRows');
-  if(idx>=0){
-    const p=getProjects()[idx];
-    document.getElementById('proj_title').value=p.title||'';
-    document.getElementById('proj_short').value=p.shortDesc||'';
-    document.getElementById('proj_desc').value=p.desc||'';
-    document.getElementById('proj_emoji').value=p.emoji||'';
-    document.getElementById('proj_videoDesc').value=p.videoDesc||'';
-    document.getElementById('proj_videoLink').value=p.videoLink||'';
-    (p.tags||[]).forEach(t=>addTag(t,'projTagsWrap','projTagInput','proj_tags_data'));
-    Object.entries(p.details||{}).forEach(([k,v])=>addDetailRow('projDetailsRows',k,v));
+  clearTags('projTagsWrap', 'projTagInput', 'proj_tags_data');
+  
+  if (idx >= 0) {
+    const p = getProjects()[idx];
+    document.getElementById('proj_title').value = p.title || '';
+    document.getElementById('proj_short').value = p.shortDesc || '';
+    document.getElementById('proj_desc').value = p.desc || '';
+    document.getElementById('proj_emoji').value = p.emoji || '';
+    document.getElementById('proj_videoDesc').value = p.videoDesc || '';
+    document.getElementById('proj_videoLink').value = p.videoLink || '';
+    (p.tags || []).forEach(t => addTag(t, 'projTagsWrap', 'projTagInput', 'proj_tags_data'));
+    Object.entries(p.details || {}).forEach(([k, v]) => addDetailRow('projDetailsRows', k, v));
   } else {
-    ['proj_title','proj_short','proj_desc','proj_emoji','proj_videoDesc','proj_videoLink'].forEach(id=>document.getElementById(id).value='');
-    addDetailRow('projDetailsRows');
+    ['proj_title', 'proj_short', 'proj_desc', 'proj_emoji', 'proj_videoDesc', 'proj_videoLink'].forEach(id => document.getElementById(id).value = '');
   }
   openModal('projectModal');
 }
-function saveProject(){
-  const title=document.getElementById('proj_title').value.trim();
-  if(!title){ showToast('Title is required','error'); return; }
-  const tags=getTags('proj_tags_data');
-  const details=getDetailRows('projDetailsRows');
-  const proj={
-    title, shortDesc:document.getElementById('proj_short').value.trim(),
-    desc:document.getElementById('proj_desc').value.trim(),
-    emoji:document.getElementById('proj_emoji').value.trim(),
+
+function saveProject() {
+  const title = document.getElementById('proj_title').value.trim();
+  if (!title) { showToast('Title is required', 'error'); return; }
+  const tags = getTags('proj_tags_data');
+  const details = getDetailRows('projDetailsRows');
+  const proj = {
+    title, shortDesc: document.getElementById('proj_short').value.trim(),
+    desc: document.getElementById('proj_desc').value.trim(),
+    emoji: document.getElementById('proj_emoji').value.trim(),
     tags, details,
-    videoDesc:document.getElementById('proj_videoDesc').value.trim(),
-    videoLink:document.getElementById('proj_videoLink').value.trim()||'#'
+    videoDesc: document.getElementById('proj_videoDesc').value.trim(),
+    videoLink: document.getElementById('proj_videoLink').value.trim() || '#'
   };
-  const data=getProjects(); const idx=+document.getElementById('projEditIdx').value;
-  if(idx===-1) data.push(proj); else data[idx]=proj;
-  setData('porto_projects',data);
-  closeModal('projectModal'); renderProjects();
-  showToast(idx===-1?'Project added ✓':'Project updated ✓','success');
+  const data = getProjects();
+  const idx = +document.getElementById('projEditIdx').value;
+  if (idx === -1) data.push(proj); else data[idx] = proj;
+  setData('porto_projects', data);
+  closeModal('projectModal');
+  renderProjects();
+  showToast(idx === -1 ? 'Project added ✓' : 'Project updated ✓', 'success');
 }
 
 /* ════════════════════════════════════════
    LAB FORM
 ════════════════════════════════════════ */
-function openLabForm(idx=-1){
-  document.getElementById('labEditIdx').value=idx;
-  document.getElementById('labModalTitle').textContent=idx===-1?'Add Lab':'Edit Lab';
-  clearTags('labTagsWrap','labTagInput','lab_tags_data');
-  if(idx>=0){
-    const l=getLabs()[idx];
-    document.getElementById('lab_title').value=l.title||'';
-    document.getElementById('lab_platform').value=l.platform||'';
-    document.getElementById('lab_icon').value=l.icon||'';
-    document.getElementById('lab_short').value=l.shortDesc||'';
-    document.getElementById('lab_desc').value=l.desc||'';
-    document.getElementById('lab_link').value=l.link||'';
-    (l.concepts||[]).forEach(t=>addTag(t,'labTagsWrap','labTagInput','lab_tags_data'));
+function renderLabs() {
+  const list = document.getElementById('labsList');
+  const labs = getLabs();
+  if (labs.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-family:var(--mono);font-size:.85rem">No labs yet</div>';
+    return;
+  }
+  list.innerHTML = labs.map((l, i) => `
+    <div class="item-card">
+      <div class="item-card-head">
+        <div class="item-card-left">
+          <div class="item-num">${i + 1}</div>
+          <div>
+            <div class="item-name">${l.title || ''}</div>
+            <div class="item-sub">${l.platform || ''}</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openLabForm(${i})">Edit</button>
+          <button class="btn-del" onclick="confirmDelete('lab',${i})">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openLabForm(idx = -1) {
+  document.getElementById('labEditIdx').value = idx;
+  document.getElementById('labModalTitle').textContent = idx === -1 ? 'Add Lab' : 'Edit Lab';
+  clearTags('labTagsWrap', 'labTagInput', 'lab_tags_data');
+  if (idx >= 0) {
+    const l = getLabs()[idx];
+    document.getElementById('lab_title').value = l.title || '';
+    document.getElementById('lab_platform').value = l.platform || '';
+    document.getElementById('lab_icon').value = l.icon || '';
+    document.getElementById('lab_short').value = l.shortDesc || '';
+    document.getElementById('lab_desc').value = l.desc || '';
+    document.getElementById('lab_link').value = l.link || '';
+    (l.concepts || []).forEach(t => addTag(t, 'labTagsWrap', 'labTagInput', 'lab_tags_data'));
   } else {
-    ['lab_title','lab_platform','lab_icon','lab_short','lab_desc','lab_link'].forEach(id=>document.getElementById(id).value='');
+    ['lab_title', 'lab_platform', 'lab_icon', 'lab_short', 'lab_desc', 'lab_link'].forEach(id => document.getElementById(id).value = '');
   }
   openModal('labModal');
 }
-function saveLab(){
-  const title=document.getElementById('lab_title').value.trim();
-  if(!title){ showToast('Title is required','error'); return; }
-  const lab={
-    title, platform:document.getElementById('lab_platform').value.trim(),
-    icon:document.getElementById('lab_icon').value.trim(),
-    shortDesc:document.getElementById('lab_short').value.trim(),
-    desc:document.getElementById('lab_desc').value.trim(),
-    concepts:getTags('lab_tags_data'),
-    link:document.getElementById('lab_link').value.trim()
+
+function saveLab() {
+  const title = document.getElementById('lab_title').value.trim();
+  if (!title) { showToast('Title is required', 'error'); return; }
+  const lab = {
+    title, platform: document.getElementById('lab_platform').value.trim(),
+    icon: document.getElementById('lab_icon').value.trim(),
+    shortDesc: document.getElementById('lab_short').value.trim(),
+    desc: document.getElementById('lab_desc').value.trim(),
+    concepts: getTags('lab_tags_data'),
+    link: document.getElementById('lab_link').value.trim()
   };
-  const data=getLabs(); const idx=+document.getElementById('labEditIdx').value;
-  if(idx===-1) data.push(lab); else data[idx]=lab;
-  setData('porto_labs',data);
-  closeModal('labModal'); renderLabs();
-  showToast(idx===-1?'Lab added ✓':'Lab updated ✓','success');
+  const data = getLabs();
+  const idx = +document.getElementById('labEditIdx').value;
+  if (idx === -1) data.push(lab); else data[idx] = lab;
+  setData('porto_labs', data);
+  closeModal('labModal');
+  renderLabs();
+  showToast(idx === -1 ? 'Lab added ✓' : 'Lab updated ✓', 'success');
 }
 
 /* ════════════════════════════════════════
    TAGS INPUT HELPER
 ════════════════════════════════════════ */
-function tagKeydown(e, inputId, wrapId, hiddenId){
-  if(e.key==='Enter'||e.key===','||e.key===';'){
+function tagKeydown(e, inputId, wrapId, hiddenId) {
+  if (e.key === 'Enter' || e.key === ',' || e.key === ';') {
     e.preventDefault();
-    const input=document.getElementById(inputId);
-    const val=input.value.replace(/,|;/g,'').trim();
-    if(val){ addTag(val,wrapId,inputId,hiddenId); input.value=''; }
+    const input = document.getElementById(inputId);
+    const val = input.value.replace(/,|;/g, '').trim();
+    if (val) { addTag(val, wrapId, inputId, hiddenId); input.value = ''; }
   }
-  if(e.key==='Backspace'&&document.getElementById(inputId).value===''){
-    const wrap=document.getElementById(wrapId);
-    const chips=wrap.querySelectorAll('.tag-chip');
-    if(chips.length){ chips[chips.length-1].remove(); syncHidden(wrapId,hiddenId); }
+  if (e.key === 'Backspace' && document.getElementById(inputId).value === '') {
+    const wrap = document.getElementById(wrapId);
+    const chips = wrap.querySelectorAll('.tag-chip');
+    if (chips.length) { chips[chips.length - 1].remove(); syncHidden(wrapId, hiddenId); }
   }
 }
-function addTag(val,wrapId,inputId,hiddenId){
-  const wrap=document.getElementById(wrapId);
-  const input=document.getElementById(inputId);
-  const chip=document.createElement('div'); chip.className='tag-chip';
-  chip.innerHTML=`${escHtml(val)}<button onclick="this.parentElement.remove();syncHidden('${wrapId}','${hiddenId}')">×</button>`;
-  wrap.insertBefore(chip,input); syncHidden(wrapId,hiddenId);
+
+function addTag(val, wrapId, inputId, hiddenId) {
+  const wrap = document.getElementById(wrapId);
+  const input = document.getElementById(inputId);
+  const chip = document.createElement('div');
+  chip.className = 'tag-chip';
+  chip.innerHTML = `${escHtml(val)}<button onclick="this.parentElement.remove();syncHidden('${wrapId}','${hiddenId}')">×</button>`;
+  wrap.insertBefore(chip, input);
+  syncHidden(wrapId, hiddenId);
 }
-function syncHidden(wrapId,hiddenId){
-  const wrap=document.getElementById(wrapId);
-  const vals=[...wrap.querySelectorAll('.tag-chip')].map(c=>c.textContent.replace('×','').trim());
-  document.getElementById(hiddenId).value=JSON.stringify(vals);
+
+function syncHidden(wrapId, hiddenId) {
+  const wrap = document.getElementById(wrapId);
+  const vals = [...wrap.querySelectorAll('.tag-chip')].map(c => c.textContent.replace('×', '').trim());
+  document.getElementById(hiddenId).value = JSON.stringify(vals);
 }
-function getTags(hiddenId){
-  try{ return JSON.parse(document.getElementById(hiddenId).value||'[]'); }catch(e){ return []; }
+
+function getTags(hiddenId) {
+  try { return JSON.parse(document.getElementById(hiddenId).value || '[]'); } catch (e) { return []; }
 }
-function clearTags(wrapId,inputId,hiddenId){
-  const wrap=document.getElementById(wrapId);
-  wrap.querySelectorAll('.tag-chip').forEach(c=>c.remove());
-  document.getElementById(hiddenId).value='';
+
+function clearTags(wrapId, inputId, hiddenId) {
+  const wrap = document.getElementById(wrapId);
+  wrap.querySelectorAll('.tag-chip').forEach(c => c.remove());
+  document.getElementById(hiddenId).value = '';
 }
 
 /* ════════════════════════════════════════
    DETAIL ROWS HELPER (projects)
 ════════════════════════════════════════ */
-function addDetailRow(containerId, k='', v=''){
-  const container=document.getElementById(containerId);
-  const row=document.createElement('div');
-  row.className='detail-row'; row.style.marginBottom='.5rem';
-  row.innerHTML=`
+function addDetailRow(containerId, k = '', v = '') {
+  const container = document.getElementById(containerId);
+  const row = document.createElement('div');
+  row.className = 'detail-row';
+  row.style.marginBottom = '.5rem';
+  row.innerHTML = `
     <input type="text" placeholder="Key (e.g. Duration)" value="${escHtml(k)}"
       style="background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);
-      font-family:var(--mono);font-size:.8rem;padding:.6rem .8rem;outline:none;width:100%">
+      font-family:var(--mono);font-size:.8rem;padding:.6rem .8rem;outline:none">
     <div style="display:flex;gap:.4rem">
       <input type="text" placeholder="Value (e.g. 3 months)" value="${escHtml(v)}"
         style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);
@@ -831,14 +923,19 @@ function addDetailRow(containerId, k='', v=''){
     </div>`;
   container.appendChild(row);
 }
-function clearDetailRows(containerId){ document.getElementById(containerId).innerHTML=''; }
-function getDetailRows(containerId){
-  const rows=document.querySelectorAll('#'+containerId+' .detail-row');
-  const obj={};
-  rows.forEach(r=>{
-    const inputs=r.querySelectorAll('input');
-    const k=inputs[0].value.trim(); const v=inputs[1].value.trim();
-    if(k) obj[k]=v;
+
+function clearDetailRows(containerId) {
+  document.getElementById(containerId).innerHTML = '';
+}
+
+function getDetailRows(containerId) {
+  const rows = document.querySelectorAll('#' + containerId + ' .detail-row');
+  const obj = {};
+  rows.forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const k = inputs[0].value.trim();
+    const v = inputs[1].value.trim();
+    if (k) obj[k] = v;
   });
   return obj;
 }
@@ -846,47 +943,91 @@ function getDetailRows(containerId){
 /* ════════════════════════════════════════
    DELETE / CONFIRM
 ════════════════════════════════════════ */
-function confirmDelete(type, idx){
+function confirmDelete(type, idx) {
   document.getElementById('confirmBg').classList.add('open');
-  document.getElementById('confirmYesBtn').onclick=()=>{ doDelete(type,idx); closeConfirm(); };
+  document.getElementById('confirmYesBtn').onclick = () => { doDelete(type, idx); closeConfirm(); };
 }
-function closeConfirm(){ document.getElementById('confirmBg').classList.remove('open'); }
-function doDelete(type,idx){
-  if(type==='cert'){ const d=getCerts(); d.splice(idx,1); setData('porto_certs',d); renderCerts(); }
-  else if(type==='project'){ const d=getProjects(); d.splice(idx,1); setData('porto_projects',d); renderProjects(); }
-  else if(type==='lab'){ const d=getLabs(); d.splice(idx,1); setData('porto_labs',d); renderLabs(); }
-  showToast('Item deleted','error');
+
+function closeConfirm() {
+  document.getElementById('confirmBg').classList.remove('open');
+}
+
+function doDelete(type, idx) {
+  if (type === 'stat') {
+    const stats = getStats();
+    delete stats[idx];
+    setData('porto_stats', stats);
+    renderStats();
+  } else if (type === 'cert') {
+    const d = getCerts();
+    d.splice(idx, 1);
+    setData('porto_certs', d);
+    renderCerts();
+  } else if (type === 'project') {
+    const d = getProjects();
+    d.splice(idx, 1);
+    setData('porto_projects', d);
+    renderProjects();
+  } else if (type === 'lab') {
+    const d = getLabs();
+    d.splice(idx, 1);
+    setData('porto_labs', d);
+    renderLabs();
+  }
+  showToast('Item deleted', 'error');
 }
 
 /* ════════════════════════════════════════
    MODAL HELPERS
 ════════════════════════════════════════ */
-function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
-function closeBgClick(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'){
-  ['certModal','projectModal','labModal'].forEach(closeModal); closeConfirm();
-}});
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeBgClick(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['statModal', 'certModal', 'projectModal', 'labModal'].forEach(closeModal);
+    closeConfirm();
+  }
+});
 
 /* ════════════════════════════════════════
    TOAST
 ════════════════════════════════════════ */
 let toastTimer;
-function showToast(msg,type='success'){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast '+type+' show';
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 /* ════════════════════════════════════════
    UTILS
 ════════════════════════════════════════ */
-function escHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
 
 /* Init */
-if(sessionStorage.getItem('adminAuth')==='1') renderAll();
+if (sessionStorage.getItem('adminAuth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderAll();
+}
 </script>
 </body>
 </html>
-
