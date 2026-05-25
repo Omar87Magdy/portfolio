@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0b0d10;
+  --surface: #12151a;
+  --card:    #181c23;
+  --border:  #232834;
+  --accent:  #00e5c3;
+  --accent2: #ff4f6d;
+  --accent3: #f5c842;
+  --text:    #e8eaf0;
+  --muted:   #6b7280;
+  --mono:    'DM Mono', monospace;
+  --sans:    'DM Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+  --radius:  12px;
+  --trans:   0.25s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── LOGIN ── */
+#loginScreen {
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,229,195,.06) 0%, transparent 70%);
+}
+.login-box {
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:2.5rem 2rem;width:100%;max-width:380px;text-align:center;
+}
+.login-logo{font-family:var(--display);font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:.4rem}
+.login-sub{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-bottom:2rem}
+.login-box input[type=password]{
+  width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);font-family:var(--mono);font-size:.85rem;padding:.85rem 1rem;
+  outline:none;transition:border-color var(--trans);margin-bottom:1rem;
+}
+.login-box input[type=password]:focus{border-color:var(--accent)}
+.btn-login{
+  width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:10px;
+  font-family:var(--display);font-weight:700;font-size:.95rem;padding:.85rem;
+  cursor:pointer;transition:opacity var(--trans);
+}
+.btn-login:hover{opacity:.85}
+.login-err{font-family:var(--mono);font-size:.75rem;color:var(--accent2);margin-top:.75rem;display:none}
+
+/* ── APP SHELL ── */
+#app{display:none}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2rem;
+  background:rgba(11,13,16,.9);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-logo{font-family:var(--display);font-weight:800;color:var(--accent);font-size:1.1rem}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.btn-view{
+  font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  padding:.4rem .9rem;border-radius:999px;border:1px solid var(--border);
+  background:var(--card);cursor:pointer;transition:all var(--trans);
+}
+.btn-view:hover{color:var(--accent);border-color:var(--accent)}
+.btn-logout{
+  font-family:var(--mono);font-size:.72rem;color:var(--accent2);
+  padding:.4rem .9rem;border-radius:999px;border:1px solid rgba(255,79,109,.3);
+  background:rgba(255,79,109,.08);cursor:pointer;transition:all var(--trans);
+}
+.btn-logout:hover{background:rgba(255,79,109,.18)}
+
+/* ── TABS ── */
+.tabs-bar{
+  display:flex;gap:.5rem;padding:1.5rem 2rem .5rem;
+  border-bottom:1px solid var(--border);
+}
+.tab-btn{
+  font-family:var(--mono);font-size:.78rem;padding:.55rem 1.2rem;border-radius:999px;
+  border:1px solid var(--border);background:var(--card);color:var(--muted);
+  cursor:pointer;transition:all var(--trans);
+}
+.tab-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.tab-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+
+/* ── PANELS ── */
+.panel{display:none;padding:2rem;max-width:1100px;margin:0 auto}
+.panel.active{display:block}
+.panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.75rem;
+}
+.panel-title{font-family:var(--display);font-weight:800;font-size:1.6rem}
+.panel-title span{color:var(--accent)}
+.btn-add{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:var(--mono);font-size:.78rem;
+  padding:.6rem 1.25rem;border-radius:999px;
+  background:var(--accent);color:var(--bg);border:none;
+  cursor:pointer;font-weight:600;transition:opacity var(--trans);
+}
+.btn-add:hover{opacity:.85}
+
+/* ── ITEM CARDS ── */
+.items-list{display:flex;flex-direction:column;gap:1rem}
+.item-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;transition:border-color var(--trans);
+}
+.item-card:hover{border-color:rgba(0,229,195,.2)}
+.item-card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.25rem;cursor:pointer;user-select:none;
+}
+.item-card-left{display:flex;align-items:center;gap:.85rem}
+.item-num{
+  font-family:var(--mono);font-size:.7rem;color:var(--muted);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:.2rem .55rem;
+}
+.item-name{font-family:var(--display);font-weight:700;font-size:1rem}
+.item-sub{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:.15rem}
+.item-actions{display:flex;gap:.5rem}
+.btn-edit,.btn-del{
+  font-family:var(--mono);font-size:.7rem;
+  padding:.35rem .8rem;border-radius:8px;cursor:pointer;
+  border:1px solid;transition:all var(--trans);
+}
+.btn-edit{color:var(--accent);border-color:rgba(0,229,195,.3);background:rgba(0,229,195,.06)}
+.btn-edit:hover{background:rgba(0,229,195,.15)}
+.btn-del{color:var(--accent2);border-color:rgba(255,79,109,.3);background:rgba(255,79,109,.06)}
+.btn-del:hover{background:rgba(255,79,109,.18)}
+
+/* ── MODAL FORM ── */
+.modal-bg{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(7,9,12,.92);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal-form{
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  width:100%;max-width:680px;max-height:88vh;overflow-y:auto;
+  padding:2rem;position:relative;
+  transform:translateY(24px);transition:transform .3s ease;
+}
+.modal-bg.open .modal-form{transform:translateY(0)}
+.mf-title{font-family:var(--display);font-weight:800;font-size:1.4rem;margin-bottom:1.5rem}
+.mf-close{
+  position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;
+  background:var(--card);border:1px solid var(--border);color:var(--muted);
+  cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;
+  transition:all var(--trans);
+}
+.mf-close:hover{background:var(--accent2);color:#fff}
+.field{margin-bottom:1.25rem}
+.field label{display:block;font-family:var(--mono);font-size:.7rem;color:var(--accent);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-family:var(--mono);font-size:.83rem;
+  padding:.75rem 1rem;outline:none;transition:border-color var(--trans);resize:vertical;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+.field textarea{min-height:100px}
+.field-hint{font-family:var(--mono);font-size:.67rem;color:var(--muted);margin-top:.35rem}
+
+/* tags input */
+.tags-input-wrap{
+  display:flex;flex-wrap:wrap;gap:.4rem;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:.6rem .75rem;cursor:text;transition:border-color var(--trans);
+}
+.tags-input-wrap:focus-within{border-color:var(--accent)}
+.tag-chip{
+  display:flex;align-items:center;gap:.3rem;
+  font-family:var(--mono);font-size:.72rem;
+  background:rgba(0,229,195,.1);border:1px solid rgba(0,229,195,.25);
+  color:var(--accent);padding:.2rem .55rem;border-radius:999px;
+}
+.tag-chip button{background:none;border:none;color:inherit;cursor:pointer;
+  font-size:.75rem;line-height:1;padding:0;opacity:.7}
+.tag-chip button:hover{opacity:1}
+.tags-input-wrap input{
+  background:none;border:none;outline:none;color:var(--text);
+  font-family:var(--mono);font-size:.8rem;flex:1;min-width:80px;padding:.1rem 0;
+}
+
+.form-actions{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.75rem}
+.btn-cancel{
+  font-family:var(--mono);font-size:.8rem;padding:.65rem 1.4rem;border-radius:10px;
+  background:var(--card);border:1px solid var(--border);color:var(--muted);cursor:pointer;
+  transition:all var(--trans);
+}
+.btn-cancel:hover{border-color:var(--accent2);color:var(--accent2)}
+.btn-save{
+  font-family:var(--mono);font-size:.8rem;padding:.65rem 1.6rem;border-radius:10px;
+  background:var(--accent);color:var(--bg);border:none;cursor:pointer;font-weight:600;
+  transition:opacity var(--trans);
+}
+.btn-save:hover{opacity:.85}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:1000;
+  font-family:var(--mono);font-size:.78rem;
+  padding:.75rem 1.25rem;border-radius:12px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--text);
+  transform:translateY(20px);opacity:0;
+  transition:all .3s ease;pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(0,229,195,.4);color:var(--accent)}
+.toast.error{border-color:rgba(255,79,109,.4);color:var(--accent2)}
+
+/* ── CONFIRM DIALOG ── */
+.confirm-bg{
+  position:fixed;inset:0;z-index:600;
+  background:rgba(7,9,12,.92);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+}
+.confirm-bg.open{opacity:1;pointer-events:all}
+.confirm-box{
+  background:var(--surface);border:1px solid rgba(255,79,109,.3);border-radius:16px;
+  padding:1.75rem 2rem;width:100%;max-width:380px;text-align:center;
+}
+.confirm-title{font-family:var(--display);font-weight:700;font-size:1.15rem;margin-bottom:.5rem}
+.confirm-msg{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+.confirm-actions{display:flex;gap:.75rem;justify-content:center}
+.btn-confirm-yes{
+  font-family:var(--mono);font-size:.78rem;padding:.6rem 1.4rem;border-radius:10px;
+  background:var(--accent2);color:#fff;border:none;cursor:pointer;font-weight:600;
+  transition:opacity var(--trans);
+}
+.btn-confirm-yes:hover{opacity:.85}
+.btn-confirm-no{
+  font-family:var(--mono);font-size:.78rem;padding:.6rem 1.4rem;border-radius:10px;
+  background:var(--card);color:var(--muted);border:1px solid var(--border);cursor:pointer;
+  transition:all var(--trans);
+}
+.btn-confirm-no:hover{color:var(--text)}
+
+/* ── CERT IMAGE PREVIEW ── */
+.img-preview-wrap{
+  margin-top:.5rem;border-radius:10px;overflow:hidden;
+  background:var(--card);border:1px solid var(--border);
+  height:140px;display:flex;align-items:center;justify-content:center;
+}
+.img-preview-wrap img{max-width:100%;max-height:140px;object-fit:contain}
+.img-preview-placeholder{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  text-align:center;padding:4rem 2rem;
+  font-family:var(--mono);font-size:.82rem;color:var(--muted);
+}
+.empty-state .es-icon{font-size:3rem;margin-bottom:1rem}
+
+/* ── DETAIL FIELDS (projects) ── */
+.detail-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:600px){
+  .detail-row{grid-template-columns:1fr}
+  .tabs-bar{flex-wrap:wrap}
+  .panel{padding:1.25rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">⚙ Admin Panel</div>
+    <div class="login-sub">Portfolio CMS · Secure Access</div>
+    <input type="password" id="pwdInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">Login</button>
+    <div class="login-err" id="loginErr">❌ Wrong password</div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">⚙ Portfolio Admin</div>
+    <div class="topbar-right">
+      <button class="btn-view" onclick="window.open('index.html','_blank')">← View Portfolio</button>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('certs')">🏆 Certificates</button>
+    <button class="tab-btn" onclick="switchTab('projects')">🛠 Projects</button>
+    <button class="tab-btn" onclick="switchTab('labs')">🧪 Labs</button>
+  </div>
+
+  <!-- CERTS PANEL -->
+  <div class="panel active" id="panel-certs">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Manage <span>Certificates</span></div>
+      </div>
+      <button class="btn-add" onclick="openCertForm()">+ Add Certificate</button>
+    </div>
+    <div class="items-list" id="certsList"></div>
+  </div>
+
+  <!-- PROJECTS PANEL -->
+  <div class="panel" id="panel-projects">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Manage <span>Projects</span></div>
+      </div>
+      <button class="btn-add" onclick="openProjectForm()">+ Add Project</button>
+    </div>
+    <div class="items-list" id="projectsList"></div>
+  </div>
+
+  <!-- LABS PANEL -->
+  <div class="panel" id="panel-labs">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Manage <span>Labs</span></div>
+      </div>
+      <button class="btn-add" onclick="openLabForm()">+ Add Lab</button>
+    </div>
+    <div class="items-list" id="labsList"></div>
+  </div>
+</div>
+
+<!-- ── CERT MODAL ── -->
+<div class="modal-bg" id="certModal" onclick="closeBgClick(event,'certModal')">
+  <div class="modal-form">
+    <button class="mf-close" onclick="closeModal('certModal')">✕</button>
+    <div class="mf-title" id="certModalTitle">Add Certificate</div>
+    <input type="hidden" id="certEditIdx" value="-1">
+
+    <div class="field">
+      <label>Title</label>
+      <input type="text" id="cert_title" placeholder="e.g. CCNA">
+    </div>
+    <div class="field">
+      <label>Issuer</label>
+      <input type="text" id="cert_issuer" placeholder="e.g. Cisco">
+    </div>
+    <div class="field">
+      <label>Date (optional)</label>
+      <input type="text" id="cert_date" placeholder="e.g. Aug 2023">
+    </div>
+    <div class="field">
+      <label>Image filename <span style="color:var(--muted)">(file must be in same folder)</span></label>
+      <input type="text" id="cert_img" placeholder="e.g. CCNA.png" oninput="previewCertImg()">
+      <div class="img-preview-wrap" id="certImgPreview">
+        <span class="img-preview-placeholder">Image preview</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Badge label (optional)</label>
+      <input type="text" id="cert_badge" placeholder="e.g. 2024">
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal('certModal')">Cancel</button>
+      <button class="btn-save" onclick="saveCert()">Save Certificate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROJECT MODAL ── -->
+<div class="modal-bg" id="projectModal" onclick="closeBgClick(event,'projectModal')">
+  <div class="modal-form">
+    <button class="mf-close" onclick="closeModal('projectModal')">✕</button>
+    <div class="mf-title" id="projectModalTitle">Add Project</div>
+    <input type="hidden" id="projEditIdx" value="-1">
+
+    <div class="field">
+      <label>Title</label>
+      <input type="text" id="proj_title" placeholder="e.g. Custom SIEM Dashboard">
+    </div>
+    <div class="field">
+      <label>Short Description (card)</label>
+      <textarea id="proj_short" placeholder="One or two sentence summary shown on the card..."></textarea>
+    </div>
+    <div class="field">
+      <label>Full Description (modal)</label>
+      <textarea id="proj_desc" style="min-height:130px" placeholder="Detailed description shown in the project modal..."></textarea>
+    </div>
+    <div class="field">
+      <label>Emoji / Thumb Icon</label>
+      <input type="text" id="proj_emoji" placeholder="🖥️">
+    </div>
+    <div class="field">
+      <label>Tags <span style="color:var(--muted)">(press Enter or comma to add)</span></label>
+      <div class="tags-input-wrap" id="projTagsWrap" onclick="document.getElementById('projTagInput').focus()">
+        <input type="text" id="projTagInput" placeholder="Add tag…" onkeydown="tagKeydown(event,'projTagInput','projTagsWrap','proj_tags_data')">
+      </div>
+      <input type="hidden" id="proj_tags_data">
+    </div>
+    <div class="field">
+      <label>Project Details (key → value pairs)</label>
+      <div id="projDetailsRows"></div>
+      <button type="button" onclick="addDetailRow('projDetailsRows')"
+        style="margin-top:.5rem;font-family:var(--mono);font-size:.72rem;color:var(--accent);
+        background:rgba(0,229,195,.07);border:1px solid rgba(0,229,195,.2);padding:.3rem .8rem;
+        border-radius:8px;cursor:pointer">+ Add detail row</button>
+    </div>
+    <div class="field">
+      <label>Video / Demo Description</label>
+      <input type="text" id="proj_videoDesc" placeholder="e.g. Full walkthrough of the dashboard">
+    </div>
+    <div class="field">
+      <label>Video Link</label>
+      <input type="text" id="proj_videoLink" placeholder="https://...">
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal('projectModal')">Cancel</button>
+      <button class="btn-save" onclick="saveProject()">Save Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LAB MODAL ── -->
+<div class="modal-bg" id="labModal" onclick="closeBgClick(event,'labModal')">
+  <div class="modal-form">
+    <button class="mf-close" onclick="closeModal('labModal')">✕</button>
+    <div class="mf-title" id="labModalTitle">Add Lab</div>
+    <input type="hidden" id="labEditIdx" value="-1">
+
+    <div class="field">
+      <label>Title</label>
+      <input type="text" id="lab_title" placeholder="e.g. Active Directory Attack & Defense">
+    </div>
+    <div class="field">
+      <label>Platform</label>
+      <input type="text" id="lab_platform" placeholder="e.g. TryHackMe">
+    </div>
+    <div class="field">
+      <label>Icon (emoji)</label>
+      <input type="text" id="lab_icon" placeholder="🧪">
+    </div>
+    <div class="field">
+      <label>Short Description (card)</label>
+      <textarea id="lab_short" placeholder="Brief summary shown on the card..."></textarea>
+    </div>
+    <div class="field">
+      <label>Full Description (detail panel)</label>
+      <textarea id="lab_desc" style="min-height:120px" placeholder="Detailed description shown when expanded..."></textarea>
+    </div>
+    <div class="field">
+      <label>Concepts / Tags <span style="color:var(--muted)">(press Enter or comma)</span></label>
+      <div class="tags-input-wrap" id="labTagsWrap" onclick="document.getElementById('labTagInput').focus()">
+        <input type="text" id="labTagInput" placeholder="Add concept…" onkeydown="tagKeydown(event,'labTagInput','labTagsWrap','lab_tags_data')">
+      </div>
+      <input type="hidden" id="lab_tags_data">
+    </div>
+    <div class="field">
+      <label>Lab Link</label>
+      <input type="text" id="lab_link" placeholder="https://...">
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal('labModal')">Cancel</button>
+      <button class="btn-save" onclick="saveLab()">Save Lab</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONFIRM ── -->
+<div class="confirm-bg" id="confirmBg">
+  <div class="confirm-box">
+    <div class="confirm-title">Delete Item</div>
+    <div class="confirm-msg">This action cannot be undone. Are you sure?</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-no" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-confirm-yes" id="confirmYesBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════
+   CONSTANTS & PASSWORD
+════════════════════════════════════════ */
+const PASSWORD = "Omar2025!";   // ← CHANGE THIS
+
+/* ════════════════════════════════════════
+   AUTH
+════════════════════════════════════════ */
+function doLogin(){
+  const v = document.getElementById('pwdInput').value;
+  if(v === PASSWORD){
+    sessionStorage.setItem('adminAuth','1');
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+    renderAll();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('pwdInput').value='';
+  }
+}
+function doLogout(){
+  sessionStorage.removeItem('adminAuth');
+  location.reload();
+}
+if(sessionStorage.getItem('adminAuth')==='1'){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+}
+
+/* ════════════════════════════════════════
+   DEFAULT DATA (mirrors index.html)
+════════════════════════════════════════ */
+const DEFAULT_CERTS = [
+  {title:"CCNA",issuer:"Cisco",date:"",img:"CCNA.png",badge:""},
+  {title:"Network Security",issuer:"Cisco",date:"",img:"Na Security.png",badge:""},
+  {title:"HCIA Routing & Switching",issuer:"Huawei",date:"Aug 2022",img:"hcia routing&switching.png",badge:""},
+  {title:"HCIA Security",issuer:"Huawei",date:"Aug 2023",img:"HCIA Security.jpeg",badge:""},
+  {title:"Red Hat System Administration I",issuer:"Red Hat Academy",date:"Apr 2026",img:"RedHat.png",badge:""},
+  {title:"NTI Summer Training",issuer:"NTI",date:"Jul 2023",img:"NTI tranning.png",badge:""},
+  {title:"ITI Bootcamp",issuer:"ITI",date:"Nov 2024",img:"ITI.png",badge:""}
+];
+
+const DEFAULT_PROJECTS = [
+  {title:"Custom SIEM Dashboard",emoji:"🖥️",shortDesc:"Real-time security event correlation and visualization platform built on the ELK stack with custom alerting rules.",desc:"Built a production-grade SIEM dashboard by extending the ELK Stack with custom Python ingestors and a Flask-based frontend. The system ingests logs from Syslog, Windows Event Logs, and custom application sources. Includes 15+ correlation rules for detecting brute-force, lateral movement, and data exfiltration attempts in real-time.",tags:["Python","ELK","SOC"],details:{"Duration":"3 months","Team Size":"Solo","Status":"Production","Stack":"Python · ELK · Docker"},videoDesc:"Full walkthrough: ingestion pipeline → alert firing → incident ticket creation",videoLink:"#"},
+  {title:"Network Anomaly Detector",emoji:"🔍",shortDesc:"ML-powered network traffic analyzer that detects anomalous patterns using unsupervised learning on pcap data.",desc:"Developed a machine learning pipeline that analyzes NetFlow/pcap data to detect anomalous network behavior. Uses Isolation Forest and LSTM autoencoders to flag unusual traffic patterns.",tags:["Python","ML","Network"],details:{"Accuracy":"94% detection","False Positive":"< 2%","Dataset":"CICIDS2017","Model":"Isolation Forest + LSTM"},videoDesc:"Demo showing live traffic capture, model inference, and alert generation dashboard",videoLink:"#"},
+  {title:"Encrypted File Vault CLI",emoji:"🔐",shortDesc:"Command-line tool for AES-256-GCM file encryption with key management and secure deletion capabilities.",desc:"A command-line vault tool written in Go that encrypts files and directories using AES-256-GCM. Key derivation uses Argon2id with tunable parameters. Supports secure deletion, key rotation, and encrypted metadata headers.",tags:["Go","Crypto","CLI"],details:{"Language":"Go 1.22","Cipher":"AES-256-GCM","KDF":"Argon2id","Platforms":"Win / Mac / Linux"},videoDesc:"Terminal demo: encrypting a sensitive directory and key rotation workflow",videoLink:"#"},
+  {title:"Web App Pentest Report",emoji:"🌐",shortDesc:"Full-scope web application penetration test covering OWASP Top 10 vulnerabilities with detailed remediation guidance.",desc:"Conducted a full-scope black-box penetration test of a client's e-commerce platform. Identified 23 vulnerabilities including a critical SQL injection, stored XSS, and broken access control. Delivered a 47-page professional report.",tags:["Burp","OWASP","Report"],details:{"Scope":"Full Black-Box","Vulns Found":"23 (4 Critical)","Duration":"2 weeks","Report":"47 pages"},videoDesc:"Redacted walkthrough of the critical SQLi exploitation chain",videoLink:"#"},
+  {title:"OSINT Automation Framework",emoji:"🤖",shortDesc:"Automated intelligence gathering tool that aggregates data from Shodan, VirusTotal, and WHOIS for threat profiling.",desc:"Modular Python framework that automates passive and active OSINT collection for threat intelligence operations. Integrates 8 APIs into a unified pipeline with deduplication and enrichment.",tags:["Python","OSINT","CTI"],details:{"APIs Integrated":"8 sources","Language":"Python 3.11","Output":"JSON + Maltego","Use Case":"CTI / Red Team Recon"},videoDesc:"Live OSINT run against a test target: from domain to full infrastructure map",videoLink:"#"},
+  {title:"Red Team Toolkit",emoji:"🏹",shortDesc:"Collection of offensive security scripts for reconnaissance, lateral movement simulation, and post-exploitation exercises.",desc:"Collection of 30+ offensive security scripts organized as a structured toolkit for authorized red team engagements. Covers initial access, persistence, lateral movement, and C2 beacon staging.",tags:["Bash","Red Team"],details:{"Scripts":"30+ modules","MITRE Coverage":"T1059, T1548, T1021…","Languages":"Bash / Python / PS1","Purpose":"Authorized Engagements"},videoDesc:"Sanitized demo of a full kill chain: phish → shell → domain admin",videoLink:"#"}
+];
+
+const DEFAULT_LABS = [
+  {icon:"🧪",title:"Active Directory Attack & Defense",platform:"TryHackMe",shortDesc:"Comprehensive lab covering AD enumeration, Kerberoasting, Pass-the-Hash and hardening techniques.",desc:"Comprehensive lab environment simulating a real enterprise Active Directory setup. Practiced full attack chains from external recon to domain compromise, then hardened the environment.",concepts:["Kerberoasting","Pass-the-Hash","BloodHound","DCSync","AS-REP Roasting","GPO Abuse","AD Hardening"],link:"https://tryhackme.com"},
+  {icon:"🌊",title:"Splunk: Zero to Power User",platform:"Splunk Boss of the SOC",shortDesc:"Threat hunting and log analysis challenges using real enterprise attack datasets in Splunk SIEM.",desc:"Competed in the Splunk BOTS dataset challenges. Analyzed real attack data from APT campaigns including credential theft, web shell deployment, and data exfiltration.",concepts:["SPL Queries","Threat Hunting","Log Correlation","MITRE ATT&CK Mapping","Dashboard Creation","Alert Tuning"],link:"https://splunk.com"},
+  {icon:"🕸️",title:"Web App Exploitation",platform:"HackTheBox / PortSwigger",shortDesc:"Solved 40+ web challenges covering SQLi, XSS, SSRF, IDOR, and advanced deserialization attacks.",desc:"Solved 40+ web security challenges across HackTheBox and PortSwigger Web Security Academy covering all OWASP Top 10 categories plus advanced topics like deserialization.",concepts:["SQL Injection","XSS (Stored/Reflected/DOM)","SSRF","IDOR","JWT Attacks","Deserialization","Path Traversal"],link:"https://portswigger.net/web-security"},
+  {icon:"🔬",title:"Malware Analysis Fundamentals",platform:"ANY.RUN / Malware Traffic",shortDesc:"Static and dynamic malware analysis using sandbox environments, Ghidra, and network forensics.",desc:"Analyzed 20+ real malware samples including ransomware, RATs, and infostealers using both static analysis in Ghidra and dynamic sandbox analysis in ANY.RUN.",concepts:["Static Analysis","Dynamic Sandboxing","Ghidra Disassembly","YARA Rules","IOC Extraction","C2 Identification","Network Forensics"],link:"https://any.run"},
+  {icon:"☁️",title:"Cloud Security Misconfiguration",platform:"CloudGoat / AWS",shortDesc:"Exploited intentionally vulnerable AWS environments to understand real-world cloud attack paths and IAM misconfigs.",desc:"Used Rhino Security's CloudGoat to practice exploiting realistic AWS misconfigurations, from overprivileged IAM roles to public S3 buckets and Lambda injection.",concepts:["IAM Privilege Escalation","S3 Bucket Exposure","Lambda Injection","SSRF → IMDS","CloudTrail Evasion","Secrets Manager"],link:"https://github.com/RhinoSecurityLabs/cloudgoat"},
+  {icon:"🔑",title:"Network Forensics & Packet Analysis",platform:"Blue Team Labs Online",shortDesc:"Analyzed real attack pcap files to reconstruct attack timelines, extract credentials and detect C2 traffic.",desc:"Reconstructed attack timelines from packet captures including credential extraction from cleartext protocols, identifying C2 beacons, and detecting data exfiltration over DNS.",concepts:["Wireshark Filters","Protocol Analysis","Credential Extraction","C2 Beacon Detection","DNS Tunneling","TLS Decryption","Tshark Scripting"],link:"https://blueteamlabs.online"}
+];
+
+/* ════════════════════════════════════════
+   DATA STORE (localStorage)
+════════════════════════════════════════ */
+function getData(key, def){ 
+  try{ const v=localStorage.getItem(key); return v?JSON.parse(v):JSON.parse(JSON.stringify(def)); }
+  catch(e){ return JSON.parse(JSON.stringify(def)); }
+}
+function setData(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+function getCerts()   { return getData('porto_certs',   DEFAULT_CERTS);    }
+function getProjects(){ return getData('porto_projects', DEFAULT_PROJECTS); }
+function getLabs()    { return getData('porto_labs',    DEFAULT_LABS);     }
+
+/* ════════════════════════════════════════
+   TABS
+════════════════════════════════════════ */
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+/* ════════════════════════════════════════
+   RENDER LISTS
+════════════════════════════════════════ */
+function renderAll(){ renderCerts(); renderProjects(); renderLabs(); }
+
+function renderCerts(){
+  const list = document.getElementById('certsList');
+  const data = getCerts();
+  if(!data.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">🏆</div>No certificates yet. Add one!</div>`; return; }
+  list.innerHTML = data.map((c,i)=>`
+    <div class="item-card">
+      <div class="item-card-head">
+        <div class="item-card-left">
+          <span class="item-num">#${i+1}</span>
+          <div>
+            <div class="item-name">${c.title}</div>
+            <div class="item-sub">${c.issuer}${c.date?' · '+c.date:''}</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openCertForm(${i})">Edit</button>
+          <button class="btn-del"  onclick="confirmDelete('cert',${i})">Delete</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderProjects(){
+  const list = document.getElementById('projectsList');
+  const data = getProjects();
+  if(!data.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">🛠</div>No projects yet. Add one!</div>`; return; }
+  list.innerHTML = data.map((p,i)=>`
+    <div class="item-card">
+      <div class="item-card-head">
+        <div class="item-card-left">
+          <span class="item-num">#${i+1}</span>
+          <div>
+            <div class="item-name">${p.emoji||''} ${p.title}</div>
+            <div class="item-sub">${(p.tags||[]).join(' · ')}</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openProjectForm(${i})">Edit</button>
+          <button class="btn-del"  onclick="confirmDelete('project',${i})">Delete</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderLabs(){
+  const list = document.getElementById('labsList');
+  const data = getLabs();
+  if(!data.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">🧪</div>No labs yet. Add one!</div>`; return; }
+  list.innerHTML = data.map((l,i)=>`
+    <div class="item-card">
+      <div class="item-card-head">
+        <div class="item-card-left">
+          <span class="item-num">#${i+1}</span>
+          <div>
+            <div class="item-name">${l.icon||''} ${l.title}</div>
+            <div class="item-sub">${l.platform}</div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openLabForm(${i})">Edit</button>
+          <button class="btn-del"  onclick="confirmDelete('lab',${i})">Delete</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════
+   CERT FORM
+════════════════════════════════════════ */
+function openCertForm(idx=-1){
+  document.getElementById('certEditIdx').value=idx;
+  document.getElementById('certModalTitle').textContent = idx===-1?'Add Certificate':'Edit Certificate';
+  if(idx>=0){
+    const c=getCerts()[idx];
+    document.getElementById('cert_title').value=c.title||'';
+    document.getElementById('cert_issuer').value=c.issuer||'';
+    document.getElementById('cert_date').value=c.date||'';
+    document.getElementById('cert_img').value=c.img||'';
+    document.getElementById('cert_badge').value=c.badge||'';
+    previewCertImg();
+  } else {
+    ['cert_title','cert_issuer','cert_date','cert_img','cert_badge'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('certImgPreview').innerHTML='<span class="img-preview-placeholder">Image preview</span>';
+  }
+  openModal('certModal');
+}
+function previewCertImg(){
+  const val=document.getElementById('cert_img').value.trim();
+  const wrap=document.getElementById('certImgPreview');
+  if(val){ wrap.innerHTML=`<img src="${val}" onerror="this.parentElement.innerHTML='<span class=\\'img-preview-placeholder\\'>Image not found</span>'">`; }
+  else { wrap.innerHTML='<span class="img-preview-placeholder">Image preview</span>'; }
+}
+function saveCert(){
+  const title=document.getElementById('cert_title').value.trim();
+  if(!title){ showToast('Title is required','error'); return; }
+  const cert={
+    title, issuer:document.getElementById('cert_issuer').value.trim(),
+    date:document.getElementById('cert_date').value.trim(),
+    img:document.getElementById('cert_img').value.trim(),
+    badge:document.getElementById('cert_badge').value.trim()
+  };
+  const data=getCerts(); const idx=+document.getElementById('certEditIdx').value;
+  if(idx===-1) data.push(cert); else data[idx]=cert;
+  setData('porto_certs',data);
+  closeModal('certModal'); renderCerts();
+  showToast(idx===-1?'Certificate added ✓':'Certificate updated ✓','success');
+}
+
+/* ════════════════════════════════════════
+   PROJECT FORM
+════════════════════════════════════════ */
+function openProjectForm(idx=-1){
+  document.getElementById('projEditIdx').value=idx;
+  document.getElementById('projectModalTitle').textContent=idx===-1?'Add Project':'Edit Project';
+  clearTags('projTagsWrap','projTagInput','proj_tags_data');
+  clearDetailRows('projDetailsRows');
+  if(idx>=0){
+    const p=getProjects()[idx];
+    document.getElementById('proj_title').value=p.title||'';
+    document.getElementById('proj_short').value=p.shortDesc||'';
+    document.getElementById('proj_desc').value=p.desc||'';
+    document.getElementById('proj_emoji').value=p.emoji||'';
+    document.getElementById('proj_videoDesc').value=p.videoDesc||'';
+    document.getElementById('proj_videoLink').value=p.videoLink||'';
+    (p.tags||[]).forEach(t=>addTag(t,'projTagsWrap','projTagInput','proj_tags_data'));
+    Object.entries(p.details||{}).forEach(([k,v])=>addDetailRow('projDetailsRows',k,v));
+  } else {
+    ['proj_title','proj_short','proj_desc','proj_emoji','proj_videoDesc','proj_videoLink'].forEach(id=>document.getElementById(id).value='');
+    addDetailRow('projDetailsRows');
+  }
+  openModal('projectModal');
+}
+function saveProject(){
+  const title=document.getElementById('proj_title').value.trim();
+  if(!title){ showToast('Title is required','error'); return; }
+  const tags=getTags('proj_tags_data');
+  const details=getDetailRows('projDetailsRows');
+  const proj={
+    title, shortDesc:document.getElementById('proj_short').value.trim(),
+    desc:document.getElementById('proj_desc').value.trim(),
+    emoji:document.getElementById('proj_emoji').value.trim(),
+    tags, details,
+    videoDesc:document.getElementById('proj_videoDesc').value.trim(),
+    videoLink:document.getElementById('proj_videoLink').value.trim()||'#'
+  };
+  const data=getProjects(); const idx=+document.getElementById('projEditIdx').value;
+  if(idx===-1) data.push(proj); else data[idx]=proj;
+  setData('porto_projects',data);
+  closeModal('projectModal'); renderProjects();
+  showToast(idx===-1?'Project added ✓':'Project updated ✓','success');
+}
+
+/* ════════════════════════════════════════
+   LAB FORM
+════════════════════════════════════════ */
+function openLabForm(idx=-1){
+  document.getElementById('labEditIdx').value=idx;
+  document.getElementById('labModalTitle').textContent=idx===-1?'Add Lab':'Edit Lab';
+  clearTags('labTagsWrap','labTagInput','lab_tags_data');
+  if(idx>=0){
+    const l=getLabs()[idx];
+    document.getElementById('lab_title').value=l.title||'';
+    document.getElementById('lab_platform').value=l.platform||'';
+    document.getElementById('lab_icon').value=l.icon||'';
+    document.getElementById('lab_short').value=l.shortDesc||'';
+    document.getElementById('lab_desc').value=l.desc||'';
+    document.getElementById('lab_link').value=l.link||'';
+    (l.concepts||[]).forEach(t=>addTag(t,'labTagsWrap','labTagInput','lab_tags_data'));
+  } else {
+    ['lab_title','lab_platform','lab_icon','lab_short','lab_desc','lab_link'].forEach(id=>document.getElementById(id).value='');
+  }
+  openModal('labModal');
+}
+function saveLab(){
+  const title=document.getElementById('lab_title').value.trim();
+  if(!title){ showToast('Title is required','error'); return; }
+  const lab={
+    title, platform:document.getElementById('lab_platform').value.trim(),
+    icon:document.getElementById('lab_icon').value.trim(),
+    shortDesc:document.getElementById('lab_short').value.trim(),
+    desc:document.getElementById('lab_desc').value.trim(),
+    concepts:getTags('lab_tags_data'),
+    link:document.getElementById('lab_link').value.trim()
+  };
+  const data=getLabs(); const idx=+document.getElementById('labEditIdx').value;
+  if(idx===-1) data.push(lab); else data[idx]=lab;
+  setData('porto_labs',data);
+  closeModal('labModal'); renderLabs();
+  showToast(idx===-1?'Lab added ✓':'Lab updated ✓','success');
+}
+
+/* ════════════════════════════════════════
+   TAGS INPUT HELPER
+════════════════════════════════════════ */
+function tagKeydown(e, inputId, wrapId, hiddenId){
+  if(e.key==='Enter'||e.key===','||e.key===';'){
+    e.preventDefault();
+    const input=document.getElementById(inputId);
+    const val=input.value.replace(/,|;/g,'').trim();
+    if(val){ addTag(val,wrapId,inputId,hiddenId); input.value=''; }
+  }
+  if(e.key==='Backspace'&&document.getElementById(inputId).value===''){
+    const wrap=document.getElementById(wrapId);
+    const chips=wrap.querySelectorAll('.tag-chip');
+    if(chips.length){ chips[chips.length-1].remove(); syncHidden(wrapId,hiddenId); }
+  }
+}
+function addTag(val,wrapId,inputId,hiddenId){
+  const wrap=document.getElementById(wrapId);
+  const input=document.getElementById(inputId);
+  const chip=document.createElement('div'); chip.className='tag-chip';
+  chip.innerHTML=`${escHtml(val)}<button onclick="this.parentElement.remove();syncHidden('${wrapId}','${hiddenId}')">×</button>`;
+  wrap.insertBefore(chip,input); syncHidden(wrapId,hiddenId);
+}
+function syncHidden(wrapId,hiddenId){
+  const wrap=document.getElementById(wrapId);
+  const vals=[...wrap.querySelectorAll('.tag-chip')].map(c=>c.textContent.replace('×','').trim());
+  document.getElementById(hiddenId).value=JSON.stringify(vals);
+}
+function getTags(hiddenId){
+  try{ return JSON.parse(document.getElementById(hiddenId).value||'[]'); }catch(e){ return []; }
+}
+function clearTags(wrapId,inputId,hiddenId){
+  const wrap=document.getElementById(wrapId);
+  wrap.querySelectorAll('.tag-chip').forEach(c=>c.remove());
+  document.getElementById(hiddenId).value='';
+}
+
+/* ════════════════════════════════════════
+   DETAIL ROWS HELPER (projects)
+════════════════════════════════════════ */
+function addDetailRow(containerId, k='', v=''){
+  const container=document.getElementById(containerId);
+  const row=document.createElement('div');
+  row.className='detail-row'; row.style.marginBottom='.5rem';
+  row.innerHTML=`
+    <input type="text" placeholder="Key (e.g. Duration)" value="${escHtml(k)}"
+      style="background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);
+      font-family:var(--mono);font-size:.8rem;padding:.6rem .8rem;outline:none;width:100%">
+    <div style="display:flex;gap:.4rem">
+      <input type="text" placeholder="Value (e.g. 3 months)" value="${escHtml(v)}"
+        style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);
+        font-family:var(--mono);font-size:.8rem;padding:.6rem .8rem;outline:none">
+      <button onclick="this.closest('.detail-row').remove()"
+        style="background:rgba(255,79,109,.1);border:1px solid rgba(255,79,109,.25);color:var(--accent2);
+        border-radius:8px;padding:.4rem .65rem;cursor:pointer;font-size:.85rem">✕</button>
+    </div>`;
+  container.appendChild(row);
+}
+function clearDetailRows(containerId){ document.getElementById(containerId).innerHTML=''; }
+function getDetailRows(containerId){
+  const rows=document.querySelectorAll('#'+containerId+' .detail-row');
+  const obj={};
+  rows.forEach(r=>{
+    const inputs=r.querySelectorAll('input');
+    const k=inputs[0].value.trim(); const v=inputs[1].value.trim();
+    if(k) obj[k]=v;
+  });
+  return obj;
+}
+
+/* ════════════════════════════════════════
+   DELETE / CONFIRM
+════════════════════════════════════════ */
+function confirmDelete(type, idx){
+  document.getElementById('confirmBg').classList.add('open');
+  document.getElementById('confirmYesBtn').onclick=()=>{ doDelete(type,idx); closeConfirm(); };
+}
+function closeConfirm(){ document.getElementById('confirmBg').classList.remove('open'); }
+function doDelete(type,idx){
+  if(type==='cert'){ const d=getCerts(); d.splice(idx,1); setData('porto_certs',d); renderCerts(); }
+  else if(type==='project'){ const d=getProjects(); d.splice(idx,1); setData('porto_projects',d); renderProjects(); }
+  else if(type==='lab'){ const d=getLabs(); d.splice(idx,1); setData('porto_labs',d); renderLabs(); }
+  showToast('Item deleted','error');
+}
+
+/* ════════════════════════════════════════
+   MODAL HELPERS
+════════════════════════════════════════ */
+function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+function closeBgClick(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){
+  ['certModal','projectModal','labModal'].forEach(closeModal); closeConfirm();
+}});
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ════════════════════════════════════════
+   UTILS
+════════════════════════════════════════ */
+function escHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/* Init */
+if(sessionStorage.getItem('adminAuth')==='1') renderAll();
+</script>
+</body>
+</html>
+

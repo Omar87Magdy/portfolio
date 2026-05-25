@@ -1,0 +1,33 @@
+{
+  "certificates": [
+    {
+      "title": "CompTIA Security+",
+      "issuer": "CompTIA",
+      "date": "2023",
+      "image": "secplus.png",
+      "badge": "Verified"
+    }
+  ],
+  "projects": [
+    {
+      "title": "SOC Dashboard",
+      "shortDesc": "Real-time threat monitoring.",
+      "fullDesc": "Built a comprehensive SOC dashboard using ELK stack.",
+      "icon": "🛡️",
+      "tags": "SIEM, ELK",
+      "details": {},
+      "video": ""
+    }
+  ],
+  "labs": [
+    {
+      "title": "AD Exploitation",
+      "platform": "TryHackMe",
+      "icon": "🧪",
+      "shortDesc": "Practiced AD attack vectors.",
+      "fullDesc": "Completed advanced AD lab.",
+      "tags": "Active Directory",
+      "link": ""
+    }
+  ]
+}

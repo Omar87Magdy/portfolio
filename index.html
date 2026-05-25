@@ -46,6 +46,7 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none; z-index: 9999; opacity: .4;
 }
+
 /* ── LIGHTBOX ── */
 .lightbox {
   position: fixed; inset: 0; z-index: 600;
@@ -75,6 +76,7 @@ body::before {
 }
 .lightbox-close:hover { background: var(--accent2); color: #fff; }
 .cert-img-wrap { cursor: zoom-in; }
+
 /* ── SCROLLBAR ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -594,39 +596,39 @@ footer span { color: var(--accent); }
 ═══════════════════════════════════════════════ -->
 <section id="about">
   <div class="about-grid">
-    <!-- Left -->
     <div>
       <div class="about-badge">Available for opportunities</div>
       <div class="about-name">Omar<br>Magdy</div>
       <div class="about-role">Cybersecurity Professional · <span>SOC Analyst</span></div>
       <p class="about-bio">
-        Passionate security professional with hands-on experience in threat detection, 
-        incident response, and penetration testing. I build defenses that hold and break 
-        systems others trust. Currently pursuing advanced certifications while working 
+        Passionate security professional with hands-on experience in threat detection,
+        incident response, and penetration testing. I build defenses that hold and break
+        systems others trust. Currently pursuing advanced certifications while working
         in a real-world SOC environment.
       </p>
-
       <div class="contact-list">
         <div class="contact-item">
           <div class="ci-icon">✉</div>
-          <a href="mailto:you@email.com">omarr90081@gmail.com</a>
+          <a href="mailto:omarr90081@gmail.com">omarr90081@gmail.com</a>
         </div>
         <div class="contact-item">
           <div class="ci-icon">🔗</div>
-          <a href="#" target="_blank">www.linkedin.com/in/omarmagdy87</a>
+          <a href="https://www.linkedin.com/in/omarmagdy87" target="_blank">linkedin.com/in/omarmagdy87</a>
         </div>
         <div class="contact-item">
           <div class="ci-icon">📍</div>
           <span>Cairo, Egypt</span>
         </div>
       </div>
-
-      <div class="stat-pills">
-        <div class="stat-pill"><strong>10+</strong> Certifications</div>
-        <div class="stat-pill"><strong>4</strong> Projects</div>
-        <div class="stat-pill"><strong>+20</strong> Labs</div>
+      <div class="stat-pills" id="statPills">
+        <!-- filled by JS -->
       </div>
     </div>
+    <div class="avatar-card">
+      <div class="avatar-glow"></div>
+      <div class="avatar-frame">
+        <div class="avatar-placeholder">🛡️</div>
+      </div>
     </div>
   </div>
 </section>
@@ -637,104 +639,12 @@ footer span { color: var(--accent); }
 <section id="certificates">
   <div class="section-label fade-in">02 / Credentials</div>
   <div class="section-title fade-in">My <span>Certificates</span></div>
-
   <div class="carousel-outer">
     <div class="carousel-track-wrap">
       <div class="carousel-track" id="certTrack">
-
-        <!-- CERT 1 -->
-        <div class="cert-card">
-<div class="cert-img-wrap" onclick="openLightbox(this)">
-             <img src="CCNA.png" alt="CCNA">
-          </div>
-          <div class="cert-body">
-            <div class="cert-title">CCNA</div>
-            <div class="cert-meta">
-              <span>🏢 Cisco</span>
-                  </div>
-          </div>
-        </div>
-
-        <!-- CERT 2 -->
-        <div class="cert-card">
-<div class="cert-img-wrap" onclick="openLightbox(this)">
-             <img src="Na Security.png" alt="Network Security">
-          </div>
-          <div class="cert-body">
-            <div class="cert-title">Network Security</div>
-            <div class="cert-meta">
-              <span>🏢 Cisco</span>
-                  </div>
-          </div>
-        </div>
-        
-<div class="cert-card">
-<div class="cert-img-wrap" onclick="openLightbox(this)">
-             <img src="hcia routing&switching.png" alt="HCIA R&S">
-          </div>
-          <div class="cert-body">
-            <div class="cert-title">HCIA Rounting & Switching</div>
-            <div class="cert-meta">
-              <span>🏢 Huawei </span>
-              <span>📅 Aug 2022</span>
-                  </div>
-          </div>
-        </div>
-        <div class="cert-card">
-<div class="cert-img-wrap" onclick="openLightbox(this)">
-             <img src="HCIA Security.jpeg" alt="HCIA Security">
-          </div>
-          <div class="cert-body">
-            <div class="cert-title">HCIA Security</div>
-            <div class="cert-meta">
-              <span>🏢 Huawei </span>
-              <span>📅 Aug 2023</span>
-                  </div>
-          </div>
-        </div>
-        <div class="cert-card">
-<div class="cert-img-wrap" onclick="openLightbox(this)">
-             <img src="RedHat.png" alt="Red Hat |">
-          </div>
-          <div class="cert-body">
-            <div class="cert-title">Red Hat System Administration I </div>
-            <div class="cert-meta">
-              <span>🏢 Red Hat Academy</span>
-              <span>📅 Apr 2026</span>
-                  </div>
-          </div>
-        </div>
-        <div class="cert-card">
-<div class="cert-img-wrap" onclick="openLightbox(this)">
-             <img src="NTI tranning.png" alt="NTI">
-          </div>
-          <div class="cert-body">
-            <div class="cert-title">NTI Summer Tranning</div>
-            <div class="cert-meta">
-              <span>🏢 NTI</span>
-              <span>📅 Jul 2023</span>
-                  </div>
-          </div>
-        </div>
-        <!-- CERT 4 -->
-        <div class="cert-card">
-<div class="cert-img-wrap" onclick="openLightbox(this)">
-             <img src="ITI.png" alt="ITI Bootcamp">
-          </div>
-          <div class="cert-body">
-            <div class="cert-title">ITI Bootcamp</div>
-            <div class="cert-meta">
-              <span>🏢 ITI</span>
-              <span>📅 Nov 2024</span>
-                  </div>
-          </div>
-        </div>
-
-       
-
-      </div><!-- /carousel-track -->
+        <!-- filled by JS -->
+      </div>
     </div>
-
     <div class="carousel-controls">
       <button class="carousel-btn" id="certPrev">&#8592;</button>
       <div class="carousel-dots" id="certDots"></div>
@@ -749,112 +659,17 @@ footer span { color: var(--accent); }
 <section id="projects">
   <div class="section-label fade-in">03 / Work</div>
   <div class="section-title fade-in">Featured <span>Projects</span></div>
-
   <div class="projects-grid" id="projectsGrid">
-
-    <!-- PROJECT 1 -->
-    <div class="project-card" onclick="openProject(0)">
-      <div class="project-thumb">
-        <img src="proj1.png" alt="SIEM Dashboard"> 
-        🖥️
-        <div class="project-tags">
-          <span class="tag">Python</span>
-          <span class="tag">ELK</span>
-          <span class="tag">SOC</span>
-        </div>
-      </div>
-      <div class="project-body">
-        <div class="project-title">Custom SIEM Dashboard</div>
-        <p class="project-desc">Real-time security event correlation and visualization platform built on the ELK stack with custom alerting rules.</p>
-      </div>
-    </div>
-
-    <!-- PROJECT 2 -->
-    <div class="project-card" onclick="openProject(1)">
-      <div class="project-thumb">
-        🔍
-        <div class="project-tags">
-          <span class="tag">Python</span>
-          <span class="tag">ML</span>
-          <span class="tag">Network</span>
-        </div>
-      </div>
-      <div class="project-body">
-        <div class="project-title">Network Anomaly Detector</div>
-        <p class="project-desc">ML-powered network traffic analyzer that detects anomalous patterns using unsupervised learning on pcap data.</p>
-      </div>
-    </div>
-
-    <!-- PROJECT 3 -->
-    <div class="project-card" onclick="openProject(2)">
-      <div class="project-thumb">
-        🔐
-        <div class="project-tags">
-          <span class="tag">Go</span>
-          <span class="tag">Crypto</span>
-          <span class="tag">CLI</span>
-        </div>
-      </div>
-      <div class="project-body">
-        <div class="project-title">Encrypted File Vault CLI</div>
-        <p class="project-desc">Command-line tool for AES-256-GCM file encryption with key management and secure deletion capabilities.</p>
-      </div>
-    </div>
-
-    <!-- PROJECT 4 -->
-    <div class="project-card" onclick="openProject(3)">
-      <div class="project-thumb">
-        🌐
-        <div class="project-tags">
-          <span class="tag">Burp</span>
-          <span class="tag">OWASP</span>
-          <span class="tag">Report</span>
-        </div>
-      </div>
-      <div class="project-body">
-        <div class="project-title">Web App Pentest Report</div>
-        <p class="project-desc">Full-scope web application penetration test covering OWASP Top 10 vulnerabilities with detailed remediation guidance.</p>
-      </div>
-    </div>
-
-    <!-- PROJECT 5 -->
-    <div class="project-card" onclick="openProject(4)">
-      <div class="project-thumb">
-        🤖
-        <div class="project-tags">
-          <span class="tag">Python</span>
-          <span class="tag">OSINT</span>
-          <span class="tag">CTI</span>
-        </div>
-      </div>
-      <div class="project-body">
-        <div class="project-title">OSINT Automation Framework</div>
-        <p class="project-desc">Automated intelligence gathering tool that aggregates data from Shodan, VirusTotal, and WHOIS for threat profiling.</p>
-      </div>
-    </div>
-
-    <!-- PROJECT 6 -->
-    <div class="project-card" onclick="openProject(5)">
-      <div class="project-thumb">
-        🏹
-        <div class="project-tags">
-          <span class="tag">Bash</span>
-          <span class="tag">Red Team</span>
-        </div>
-      </div>
-      <div class="project-body">
-        <div class="project-title">Red Team Toolkit</div>
-        <p class="project-desc">Collection of offensive security scripts for reconnaissance, lateral movement simulation, and post-exploitation exercises.</p>
-      </div>
-    </div>
-
+    <!-- filled by JS -->
   </div>
 </section>
+
 <!-- ── LIGHTBOX ── -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lightboxImg" src="" alt="Certificate">
 </div>
+
 <!-- ── PROJECT MODAL ── -->
 <div class="modal-overlay" id="projectModal" onclick="closeProjectModal(event)">
   <div class="modal" id="modalContent">
@@ -869,276 +684,158 @@ footer span { color: var(--accent); }
 <section id="labs">
   <div class="section-label fade-in">04 / Hands-on</div>
   <div class="section-title fade-in">Lab <span>Experience</span></div>
-
   <div class="labs-grid" id="labsGrid">
-
-    <!-- LAB 1 -->
-    <div class="lab-card" onclick="toggleLab(0)">
-      <div class="lab-header">
-        <div class="lab-icon">🧪</div>
-        <div class="lab-info">
-          <div class="lab-title">Active Directory Attack & Defense</div>
-          <div class="lab-platform">TryHackMe</div>
-        </div>
-      </div>
-      <div class="lab-desc">Comprehensive lab covering AD enumeration, Kerberoasting, Pass-the-Hash and hardening techniques.</div>
-      <div class="lab-footer">
-        <div class="lab-tags-mini">
-          <span class="lab-tag-mini">AD</span>
-          <span class="lab-tag-mini">Kerberos</span>
-          <span class="lab-tag-mini">BloodHound</span>
-        </div>
-        <span class="lab-expand-btn">Details ↓</span>
-      </div>
-    </div>
-
-    <!-- LAB 2 -->
-    <div class="lab-card" onclick="toggleLab(1)">
-      <div class="lab-header">
-        <div class="lab-icon">🌊</div>
-        <div class="lab-info">
-          <div class="lab-title">Splunk: Zero to Power User</div>
-          <div class="lab-platform">Splunk Boss of the SOC</div>
-        </div>
-      </div>
-      <div class="lab-desc">Threat hunting and log analysis challenges using real enterprise attack datasets in Splunk SIEM.</div>
-      <div class="lab-footer">
-        <div class="lab-tags-mini">
-          <span class="lab-tag-mini">Splunk</span>
-          <span class="lab-tag-mini">SPL</span>
-          <span class="lab-tag-mini">SIEM</span>
-        </div>
-        <span class="lab-expand-btn">Details ↓</span>
-      </div>
-    </div>
-
-    <!-- LAB 3 -->
-    <div class="lab-card" onclick="toggleLab(2)">
-      <div class="lab-header">
-        <div class="lab-icon">🕸️</div>
-        <div class="lab-info">
-          <div class="lab-title">Web App Exploitation</div>
-          <div class="lab-platform">HackTheBox / PortSwigger</div>
-        </div>
-      </div>
-      <div class="lab-desc">Solved 40+ web challenges covering SQLi, XSS, SSRF, IDOR, and advanced deserialization attacks.</div>
-      <div class="lab-footer">
-        <div class="lab-tags-mini">
-          <span class="lab-tag-mini">SQLi</span>
-          <span class="lab-tag-mini">XSS</span>
-          <span class="lab-tag-mini">SSRF</span>
-        </div>
-        <span class="lab-expand-btn">Details ↓</span>
-      </div>
-    </div>
-
-    <!-- LAB 4 -->
-    <div class="lab-card" onclick="toggleLab(3)">
-      <div class="lab-header">
-        <div class="lab-icon">🔬</div>
-        <div class="lab-info">
-          <div class="lab-title">Malware Analysis Fundamentals</div>
-          <div class="lab-platform">ANY.RUN / Malware Traffic</div>
-        </div>
-      </div>
-      <div class="lab-desc">Static and dynamic malware analysis using sandbox environments, Ghidra, and network forensics.</div>
-      <div class="lab-footer">
-        <div class="lab-tags-mini">
-          <span class="lab-tag-mini">Ghidra</span>
-          <span class="lab-tag-mini">YARA</span>
-          <span class="lab-tag-mini">Wireshark</span>
-        </div>
-        <span class="lab-expand-btn">Details ↓</span>
-      </div>
-    </div>
-
-    <!-- LAB 5 -->
-    <div class="lab-card" onclick="toggleLab(4)">
-      <div class="lab-header">
-        <div class="lab-icon">☁️</div>
-        <div class="lab-info">
-          <div class="lab-title">Cloud Security Misconfiguration</div>
-          <div class="lab-platform">CloudGoat / AWS</div>
-        </div>
-      </div>
-      <div class="lab-desc">Exploited intentionally vulnerable AWS environments to understand real-world cloud attack paths and IAM misconfigs.</div>
-      <div class="lab-footer">
-        <div class="lab-tags-mini">
-          <span class="lab-tag-mini">AWS</span>
-          <span class="lab-tag-mini">IAM</span>
-          <span class="lab-tag-mini">S3</span>
-        </div>
-        <span class="lab-expand-btn">Details ↓</span>
-      </div>
-    </div>
-
-    <!-- LAB 6 -->
-    <div class="lab-card" onclick="toggleLab(5)">
-      <div class="lab-header">
-        <div class="lab-icon">🔑</div>
-        <div class="lab-info">
-          <div class="lab-title">Network Forensics & Packet Analysis</div>
-          <div class="lab-platform">Blue Team Labs Online</div>
-        </div>
-      </div>
-      <div class="lab-desc">Analyzed real attack pcap files to reconstruct attack timelines, extract credentials and detect C2 traffic.</div>
-      <div class="lab-footer">
-        <div class="lab-tags-mini">
-          <span class="lab-tag-mini">Wireshark</span>
-          <span class="lab-tag-mini">Tshark</span>
-          <span class="lab-tag-mini">pcap</span>
-        </div>
-        <span class="lab-expand-btn">Details ↓</span>
-      </div>
-    </div>
-
-  </div><!-- /labs-grid -->
+    <!-- filled by JS -->
+  </div>
 </section>
 
 <!-- ── FOOTER ── -->
 <footer>
-  <p>Crafted with precision by <span>Your Name</span> · Built for the security community</p>
+  <p>Crafted with precision by <span>Omar Magdy</span> · Built for the security community</p>
   <p style="margin-top:.5rem; font-size:.65rem;">© 2025 All rights reserved</p>
 </footer>
 
-<!-- ══════════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════════ -->
 <script>
-/* ── PROJECT DATA ── */
-const projects = [
-  {
-    title: "Custom SIEM Dashboard",
-    tags: ["Python", "Elasticsearch", "Logstash", "Kibana", "Flask", "Docker"],
-    desc: `Built a production-grade SIEM dashboard by extending the ELK Stack with custom Python ingestors 
-and a Flask-based frontend. The system ingests logs from Syslog, Windows Event Logs, and custom 
-application sources. Includes 15+ correlation rules for detecting brute-force, lateral movement, 
-and data exfiltration attempts in real-time.`,
-    images: ["🖥️", "📊"],
-    details: {
-      "Duration": "3 months",
-      "Team Size": "Solo",
-      "Status": "Production",
-      "Stack": "Python · ELK · Docker",
-    },
-    videoDesc: "Full walkthrough: ingestion pipeline → alert firing → incident ticket creation",
-    videoLink: "#"
-  },
-  {
-    title: "Network Anomaly Detector",
-    tags: ["Python", "Scikit-learn", "Scapy", "Pandas", "Jupyter", "Kafka"],
-    desc: `Developed a machine learning pipeline that analyzes NetFlow/pcap data to detect anomalous 
-network behavior. Uses Isolation Forest and LSTM autoencoders to flag unusual traffic patterns. 
-Achieved 94% detection rate on the CICIDS2017 dataset with less than 2% false positives. 
-Deployed as a lightweight containerized microservice.`,
-    images: ["🔍", "📈"],
-    details: {
-      "Accuracy": "94% detection",
-      "False Positive": "< 2%",
-      "Dataset": "CICIDS2017",
-      "Model": "Isolation Forest + LSTM",
-    },
-    videoDesc: "Demo showing live traffic capture, model inference, and alert generation dashboard",
-    videoLink: "#"
-  },
-  {
-    title: "Encrypted File Vault CLI",
-    tags: ["Go", "AES-256-GCM", "Argon2", "PBKDF2", "CLI", "Cross-platform"],
-    desc: `A command-line vault tool written in Go that encrypts files and directories using AES-256-GCM. 
-Key derivation uses Argon2id with tunable parameters. Supports secure deletion (DoD 5220.22-M), 
-key rotation, and encrypted metadata headers. Compiles to a single binary for Windows, macOS, and Linux.`,
-    images: ["🔐", "⚙️"],
-    details: {
-      "Language": "Go 1.22",
-      "Cipher": "AES-256-GCM",
-      "KDF": "Argon2id",
-      "Platforms": "Win / Mac / Linux",
-    },
-    videoDesc: "Terminal demo: encrypting a sensitive directory and key rotation workflow",
-    videoLink: "#"
-  },
-  {
-    title: "Web App Pentest Report",
-    tags: ["Burp Suite Pro", "OWASP Top 10", "SQLMap", "Nuclei", "Metasploit"],
-    desc: `Conducted a full-scope black-box penetration test of a client's e-commerce platform. 
-Identified 23 vulnerabilities including a critical SQL injection, stored XSS, and broken access 
-control. Delivered a 47-page professional report with CVSS scores, proof-of-concept exploits, 
-and step-by-step remediation guidance. All critical issues resolved within two weeks.`,
-    images: ["🌐", "📋"],
-    details: {
-      "Scope": "Full Black-Box",
-      "Vulns Found": "23 (4 Critical)",
-      "Duration": "2 weeks",
-      "Report": "47 pages",
-    },
-    videoDesc: "Redacted walkthrough of the critical SQLi exploitation chain",
-    videoLink: "#"
-  },
-  {
-    title: "OSINT Automation Framework",
-    tags: ["Python", "Shodan API", "VirusTotal API", "TheHarvester", "Maltego", "Docker"],
-    desc: `Modular Python framework that automates passive and active OSINT collection for threat 
-intelligence operations. Integrates 8 APIs (Shodan, VT, WHOIS, Censys, Hunter.io, etc.) into a 
-unified pipeline with deduplication and enrichment. Generates structured JSON threat profiles and 
-visual relationship graphs using NetworkX and Maltego transforms.`,
-    images: ["🤖", "🕸️"],
-    details: {
-      "APIs Integrated": "8 sources",
-      "Language": "Python 3.11",
-      "Output": "JSON + Maltego",
-      "Use Case": "CTI / Red Team Recon",
-    },
-    videoDesc: "Live OSINT run against a test target: from domain to full infrastructure map",
-    videoLink: "#"
-  },
-  {
-    title: "Red Team Toolkit",
-    tags: ["Bash", "Python", "PowerShell", "Cobalt Strike", "Sliver", "C2"],
-    desc: `Collection of 30+ offensive security scripts organized as a structured toolkit for 
-authorized red team engagements. Covers initial access (phishing templates, macro generators), 
-persistence (scheduled tasks, registry modifications), lateral movement (WMI, PsExec wrappers), 
-and C2 beacon staging. All scripts include OPSEC notes and detection indicators for blue team training.`,
-    images: ["🏹", "💻"],
-    details: {
-      "Scripts": "30+ modules",
-      "MITRE Coverage": "T1059, T1548, T1021…",
-      "Languages": "Bash / Python / PS1",
-      "Purpose": "Authorized Engagements",
-    },
-    videoDesc: "Sanitized demo of a full kill chain: phish → shell → domain admin",
-    videoLink: "#"
-  }
+/* ════════════════════════════════════════
+   DEFAULT DATA  (fallback if admin hasn't saved yet)
+════════════════════════════════════════ */
+const DEFAULT_CERTS = [
+  {title:"CCNA",issuer:"Cisco",date:"",img:"CCNA.png",badge:""},
+  {title:"Network Security",issuer:"Cisco",date:"",img:"Na Security.png",badge:""},
+  {title:"HCIA Routing & Switching",issuer:"Huawei",date:"Aug 2022",img:"hcia routing&switching.png",badge:""},
+  {title:"HCIA Security",issuer:"Huawei",date:"Aug 2023",img:"HCIA Security.jpeg",badge:""},
+  {title:"Red Hat System Administration I",issuer:"Red Hat Academy",date:"Apr 2026",img:"RedHat.png",badge:""},
+  {title:"NTI Summer Training",issuer:"NTI",date:"Jul 2023",img:"NTI tranning.png",badge:""},
+  {title:"ITI Bootcamp",issuer:"ITI",date:"Nov 2024",img:"ITI.png",badge:""}
 ];
 
-/* ── PROJECT MODAL ── */
+const DEFAULT_PROJECTS = [
+  {title:"Custom SIEM Dashboard",emoji:"🖥️",shortDesc:"Real-time security event correlation and visualization platform built on the ELK stack with custom alerting rules.",desc:"Built a production-grade SIEM dashboard by extending the ELK Stack with custom Python ingestors and a Flask-based frontend. The system ingests logs from Syslog, Windows Event Logs, and custom application sources. Includes 15+ correlation rules for detecting brute-force, lateral movement, and data exfiltration attempts in real-time.",tags:["Python","ELK","SOC"],details:{"Duration":"3 months","Team Size":"Solo","Status":"Production","Stack":"Python · ELK · Docker"},videoDesc:"Full walkthrough: ingestion pipeline → alert firing → incident ticket creation",videoLink:"#"},
+  {title:"Network Anomaly Detector",emoji:"🔍",shortDesc:"ML-powered network traffic analyzer that detects anomalous patterns using unsupervised learning on pcap data.",desc:"Developed a machine learning pipeline that analyzes NetFlow/pcap data to detect anomalous network behavior. Uses Isolation Forest and LSTM autoencoders to flag unusual traffic patterns.",tags:["Python","ML","Network"],details:{"Accuracy":"94% detection","False Positive":"< 2%","Dataset":"CICIDS2017","Model":"Isolation Forest + LSTM"},videoDesc:"Demo showing live traffic capture, model inference, and alert generation dashboard",videoLink:"#"},
+  {title:"Encrypted File Vault CLI",emoji:"🔐",shortDesc:"Command-line tool for AES-256-GCM file encryption with key management and secure deletion capabilities.",desc:"A command-line vault tool written in Go that encrypts files and directories using AES-256-GCM. Key derivation uses Argon2id with tunable parameters. Supports secure deletion, key rotation, and encrypted metadata headers.",tags:["Go","Crypto","CLI"],details:{"Language":"Go 1.22","Cipher":"AES-256-GCM","KDF":"Argon2id","Platforms":"Win / Mac / Linux"},videoDesc:"Terminal demo: encrypting a sensitive directory and key rotation workflow",videoLink:"#"},
+  {title:"Web App Pentest Report",emoji:"🌐",shortDesc:"Full-scope web application penetration test covering OWASP Top 10 vulnerabilities with detailed remediation guidance.",desc:"Conducted a full-scope black-box penetration test of a client's e-commerce platform. Identified 23 vulnerabilities including a critical SQL injection, stored XSS, and broken access control. Delivered a 47-page professional report.",tags:["Burp","OWASP","Report"],details:{"Scope":"Full Black-Box","Vulns Found":"23 (4 Critical)","Duration":"2 weeks","Report":"47 pages"},videoDesc:"Redacted walkthrough of the critical SQLi exploitation chain",videoLink:"#"},
+  {title:"OSINT Automation Framework",emoji:"🤖",shortDesc:"Automated intelligence gathering tool that aggregates data from Shodan, VirusTotal, and WHOIS for threat profiling.",desc:"Modular Python framework that automates passive and active OSINT collection for threat intelligence operations. Integrates 8 APIs into a unified pipeline with deduplication and enrichment.",tags:["Python","OSINT","CTI"],details:{"APIs Integrated":"8 sources","Language":"Python 3.11","Output":"JSON + Maltego","Use Case":"CTI / Red Team Recon"},videoDesc:"Live OSINT run against a test target: from domain to full infrastructure map",videoLink:"#"},
+  {title:"Red Team Toolkit",emoji:"🏹",shortDesc:"Collection of offensive security scripts for reconnaissance, lateral movement simulation, and post-exploitation exercises.",desc:"Collection of 30+ offensive security scripts organized as a structured toolkit for authorized red team engagements. Covers initial access, persistence, lateral movement, and C2 beacon staging.",tags:["Bash","Red Team"],details:{"Scripts":"30+ modules","MITRE Coverage":"T1059, T1548, T1021…","Languages":"Bash / Python / PS1","Purpose":"Authorized Engagements"},videoDesc:"Sanitized demo of a full kill chain: phish → shell → domain admin",videoLink:"#"}
+];
+
+const DEFAULT_LABS = [
+  {icon:"🧪",title:"Active Directory Attack & Defense",platform:"TryHackMe",shortDesc:"Comprehensive lab covering AD enumeration, Kerberoasting, Pass-the-Hash and hardening techniques.",desc:"Comprehensive lab environment simulating a real enterprise Active Directory setup. Practiced full attack chains from external recon to domain compromise, then hardened the environment.",concepts:["Kerberoasting","Pass-the-Hash","BloodHound","DCSync","AS-REP Roasting","GPO Abuse","AD Hardening"],link:"https://tryhackme.com"},
+  {icon:"🌊",title:"Splunk: Zero to Power User",platform:"Splunk Boss of the SOC",shortDesc:"Threat hunting and log analysis challenges using real enterprise attack datasets in Splunk SIEM.",desc:"Competed in the Splunk BOTS dataset challenges. Analyzed real attack data from APT campaigns including credential theft, web shell deployment, and data exfiltration.",concepts:["SPL Queries","Threat Hunting","Log Correlation","MITRE ATT&CK Mapping","Dashboard Creation","Alert Tuning"],link:"https://splunk.com"},
+  {icon:"🕸️",title:"Web App Exploitation",platform:"HackTheBox / PortSwigger",shortDesc:"Solved 40+ web challenges covering SQLi, XSS, SSRF, IDOR, and advanced deserialization attacks.",desc:"Solved 40+ web security challenges across HackTheBox and PortSwigger Web Security Academy covering all OWASP Top 10 categories plus advanced topics like deserialization.",concepts:["SQL Injection","XSS (Stored/Reflected/DOM)","SSRF","IDOR","JWT Attacks","Deserialization","Path Traversal"],link:"https://portswigger.net/web-security"},
+  {icon:"🔬",title:"Malware Analysis Fundamentals",platform:"ANY.RUN / Malware Traffic",shortDesc:"Static and dynamic malware analysis using sandbox environments, Ghidra, and network forensics.",desc:"Analyzed 20+ real malware samples including ransomware, RATs, and infostealers using both static analysis in Ghidra and dynamic sandbox analysis in ANY.RUN.",concepts:["Static Analysis","Dynamic Sandboxing","Ghidra Disassembly","YARA Rules","IOC Extraction","C2 Identification","Network Forensics"],link:"https://any.run"},
+  {icon:"☁️",title:"Cloud Security Misconfiguration",platform:"CloudGoat / AWS",shortDesc:"Exploited intentionally vulnerable AWS environments to understand real-world cloud attack paths and IAM misconfigs.",desc:"Used Rhino Security's CloudGoat to practice exploiting realistic AWS misconfigurations, from overprivileged IAM roles to public S3 buckets and Lambda injection.",concepts:["IAM Privilege Escalation","S3 Bucket Exposure","Lambda Injection","SSRF → IMDS","CloudTrail Evasion","Secrets Manager"],link:"https://github.com/RhinoSecurityLabs/cloudgoat"},
+  {icon:"🔑",title:"Network Forensics & Packet Analysis",platform:"Blue Team Labs Online",shortDesc:"Analyzed real attack pcap files to reconstruct attack timelines, extract credentials and detect C2 traffic.",desc:"Reconstructed attack timelines from packet captures including credential extraction from cleartext protocols, identifying C2 beacons, and detecting data exfiltration over DNS.",concepts:["Wireshark Filters","Protocol Analysis","Credential Extraction","C2 Beacon Detection","DNS Tunneling","TLS Decryption","Tshark Scripting"],link:"https://blueteamlabs.online"}
+];
+
+/* ════════════════════════════════════════
+   DATA HELPERS
+════════════════════════════════════════ */
+function getData(key, def) {
+  try {
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : JSON.parse(JSON.stringify(def));
+  } catch(e) {
+    return JSON.parse(JSON.stringify(def));
+  }
+}
+function getCerts()    { return getData('porto_certs',    DEFAULT_CERTS);    }
+function getProjects() { return getData('porto_projects', DEFAULT_PROJECTS); }
+function getLabs()     { return getData('porto_labs',     DEFAULT_LABS);     }
+
+/* ════════════════════════════════════════
+   STAT PILLS (dynamic counts)
+════════════════════════════════════════ */
+function renderStatPills() {
+  const c = getCerts().length;
+  const p = getProjects().length;
+  const l = getLabs().length;
+  document.getElementById('statPills').innerHTML = `
+    <div class="stat-pill"><strong>${c}</strong> Certifications</div>
+    <div class="stat-pill"><strong>${p}</strong> Projects</div>
+    <div class="stat-pill"><strong>${l}+</strong> Labs</div>`;
+}
+
+/* ════════════════════════════════════════
+   RENDER CERTIFICATES
+════════════════════════════════════════ */
+function renderCerts() {
+  const track = document.getElementById('certTrack');
+  const certs = getCerts();
+  track.innerHTML = certs.map(c => {
+    const imgHTML = c.img
+      ? `<img src="${c.img}" alt="${c.title}">`
+      : `<div class="cert-img-placeholder">🏆</div>`;
+    const badgeHTML = c.badge ? `<div class="cert-badge">${c.badge}</div>` : '';
+    const dateHTML  = c.date  ? `<span>📅 ${c.date}</span>` : '';
+    return `
+      <div class="cert-card">
+        <div class="cert-img-wrap" onclick="openLightbox(this)">
+          ${imgHTML}
+          ${badgeHTML}
+        </div>
+        <div class="cert-body">
+          <div class="cert-title">${c.title}</div>
+          <div class="cert-meta">
+            <span>🏢 ${c.issuer}</span>
+            ${dateHTML}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  initCarousel();
+}
+
+/* ════════════════════════════════════════
+   RENDER PROJECTS
+════════════════════════════════════════ */
+function renderProjects() {
+  const grid = document.getElementById('projectsGrid');
+  const projects = getProjects();
+  grid.innerHTML = projects.map((p, i) => {
+    const tagsHTML = (p.tags||[]).map(t => `<span class="tag">${t}</span>`).join('');
+    return `
+      <div class="project-card" onclick="openProject(${i})">
+        <div class="project-thumb">
+          ${p.emoji || '🛠️'}
+          <div class="project-tags">${tagsHTML}</div>
+        </div>
+        <div class="project-body">
+          <div class="project-title">${p.title}</div>
+          <p class="project-desc">${p.shortDesc || ''}</p>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════
+   PROJECT MODAL
+════════════════════════════════════════ */
 function openProject(i) {
-  const p = projects[i];
-  const tagsHTML = p.tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
-  const imgsHTML = p.images.map(e => `<div class="modal-img">${e}</div>`).join('');
-  const detHTML = Object.entries(p.details)
+  const p = getProjects()[i];
+  if (!p) return;
+  const tagsHTML = (p.tags||[]).map(t => `<span class="modal-tag">${t}</span>`).join('');
+  const detHTML  = Object.entries(p.details||{})
     .map(([k,v]) => `<div class="detail-chip"><div class="dk">${k}</div><div class="dv">${v}</div></div>`)
     .join('');
+  const imgsHTML = (p.images||[p.emoji||'🛠️','📊']).map(e => `<div class="modal-img">${e}</div>`).join('');
 
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-title">${p.title}</div>
     <div class="modal-tags">${tagsHTML}</div>
-
     <div class="modal-section-head">Project Description</div>
-    <p class="modal-desc">${p.desc}</p>
-
+    <p class="modal-desc">${p.desc || p.shortDesc || ''}</p>
     <div class="modal-section-head">Screenshots</div>
     <div class="modal-images">${imgsHTML}</div>
-
     <div class="modal-section-head">Demo Video</div>
     <div class="modal-video">
       <div class="play-icon">▶</div>
-      <span>${p.videoDesc}</span>
-      <a href="${p.videoLink}" style="color:var(--accent);font-family:var(--mono);font-size:.75rem;margin-top:.25rem;">Watch Demo →</a>
+      <span>${p.videoDesc || 'Demo video'}</span>
+      ${p.videoLink && p.videoLink !== '#'
+        ? `<a href="${p.videoLink}" target="_blank" style="color:var(--accent);font-family:var(--mono);font-size:.75rem;margin-top:.25rem;">Watch Demo →</a>`
+        : ''}
     </div>
-
     <div class="modal-section-head">Project Details</div>
-    <div class="modal-details">${detHTML}</div>
-  `;
+    <div class="modal-details">${detHTML}</div>`;
 
   document.getElementById('projectModal').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1148,74 +845,46 @@ function closeModal() {
   document.getElementById('projectModal').classList.remove('active');
   document.body.style.overflow = '';
 }
-
 function closeProjectModal(e) {
   if (e.target === document.getElementById('projectModal')) closeModal();
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+/* ════════════════════════════════════════
+   RENDER LABS
+════════════════════════════════════════ */
+function renderLabs() {
+  const grid = document.getElementById('labsGrid');
+  const labs = getLabs();
+  grid.innerHTML = labs.map((l, i) => {
+    const tagsHTML = (l.concepts||[]).slice(0,3).map(t => `<span class="lab-tag-mini">${t}</span>`).join('');
+    return `
+      <div class="lab-card" onclick="toggleLab(${i})">
+        <div class="lab-header">
+          <div class="lab-icon">${l.icon || '🧪'}</div>
+          <div class="lab-info">
+            <div class="lab-title">${l.title}</div>
+            <div class="lab-platform">${l.platform}</div>
+          </div>
+        </div>
+        <div class="lab-desc">${l.shortDesc || l.desc || ''}</div>
+        <div class="lab-footer">
+          <div class="lab-tags-mini">${tagsHTML}</div>
+          <span class="lab-expand-btn">Details ↓</span>
+        </div>
+      </div>`;
+  }).join('');
+}
 
-/* ── LAB DATA ── */
-const labs = [
-  {
-    icon: "🧪",
-    title: "Active Directory Attack & Defense",
-    platform: "TryHackMe",
-    desc: "Comprehensive lab environment simulating a real enterprise Active Directory setup. Practiced full attack chains from external recon to domain compromise, then hardened the environment.",
-    concepts: ["Kerberoasting", "Pass-the-Hash", "BloodHound", "DCSync", "AS-REP Roasting", "GPO Abuse", "AD Hardening"],
-    link: "https://tryhackme.com"
-  },
-  {
-    icon: "🌊",
-    title: "Splunk: Zero to Power User",
-    platform: "Splunk Boss of the SOC",
-    desc: "Competed in the Splunk BOTS dataset challenges. Analyzed real attack data from APT campaigns including credential theft, web shell deployment, and data exfiltration.",
-    concepts: ["SPL Queries", "Threat Hunting", "Log Correlation", "MITRE ATT&CK Mapping", "Dashboard Creation", "Alert Tuning"],
-    link: "https://splunk.com/en_us/blog/security/botsv3-dataset-released.html"
-  },
-  {
-    icon: "🕸️",
-    title: "Web App Exploitation",
-    platform: "HackTheBox / PortSwigger",
-    desc: "Solved 40+ web security challenges across HackTheBox and PortSwigger Web Security Academy covering all OWASP Top 10 categories plus advanced topics like deserialization.",
-    concepts: ["SQL Injection", "XSS (Stored/Reflected/DOM)", "SSRF", "IDOR", "JWT Attacks", "Deserialization", "Path Traversal"],
-    link: "https://portswigger.net/web-security"
-  },
-  {
-    icon: "🔬",
-    title: "Malware Analysis Fundamentals",
-    platform: "ANY.RUN / Malware Traffic Analysis",
-    desc: "Analyzed 20+ real malware samples including ransomware, RATs, and infostealers using both static analysis in Ghidra and dynamic sandbox analysis in ANY.RUN.",
-    concepts: ["Static Analysis", "Dynamic Sandboxing", "Ghidra Disassembly", "YARA Rules", "IOC Extraction", "C2 Identification", "Network Forensics"],
-    link: "https://any.run"
-  },
-  {
-    icon: "☁️",
-    title: "Cloud Security Misconfiguration",
-    platform: "CloudGoat / AWS",
-    desc: "Used Rhino Security's CloudGoat to practice exploiting realistic AWS misconfigurations, from overprivileged IAM roles to public S3 buckets and Lambda injection.",
-    concepts: ["IAM Privilege Escalation", "S3 Bucket Exposure", "Lambda Injection", "SSRF → IMDS", "CloudTrail Evasion", "Secrets Manager"],
-    link: "https://github.com/RhinoSecurityLabs/cloudgoat"
-  },
-  {
-    icon: "🔑",
-    title: "Network Forensics & Packet Analysis",
-    platform: "Blue Team Labs Online",
-    desc: "Reconstructed attack timelines from packet captures including credential extraction from cleartext protocols, identifying C2 beacons, and detecting data exfiltration over DNS.",
-    concepts: ["Wireshark Filters", "Protocol Analysis", "Credential Extraction", "C2 Beacon Detection", "DNS Tunneling", "TLS Decryption", "Tshark Scripting"],
-    link: "https://blueteamlabs.online"
-  }
-];
-
-/* ── LAB TOGGLE ── */
+/* ════════════════════════════════════════
+   LAB TOGGLE
+════════════════════════════════════════ */
 let openLabIndex = null;
-let labDetailEl = null;
+let labDetailEl  = null;
 
 function toggleLab(i) {
-  const grid = document.getElementById('labsGrid');
+  const grid  = document.getElementById('labsGrid');
   const cards = grid.querySelectorAll('.lab-card');
 
-  // Close existing detail
   if (labDetailEl) {
     labDetailEl.remove();
     labDetailEl = null;
@@ -1223,102 +892,101 @@ function toggleLab(i) {
   }
 
   openLabIndex = i;
-  const lab = labs[i];
-  const conHTML = lab.concepts.map(c => `<span class="concept-chip">${c}</span>`).join('');
+  const lab = getLabs()[i];
+  if (!lab) return;
+  const conHTML = (lab.concepts||[]).map(c => `<span class="concept-chip">${c}</span>`).join('');
 
   const detail = document.createElement('div');
   detail.className = 'lab-detail open';
   detail.innerHTML = `
     <div class="lab-detail-grid">
-      <div class="lab-detail-img">${lab.icon}</div>
+      <div class="lab-detail-img">${lab.icon || '🧪'}</div>
       <div>
         <div class="lab-detail-title">${lab.title}</div>
-        <p class="lab-detail-desc">${lab.desc}</p>
+        <p class="lab-detail-desc">${lab.desc || lab.shortDesc || ''}</p>
         <div class="concepts-label">Concepts Learned</div>
         <div class="concepts-list">${conHTML}</div>
-        <a class="lab-link-btn" href="${lab.link}" target="_blank">Open Lab ↗</a>
+        ${lab.link ? `<a class="lab-link-btn" href="${lab.link}" target="_blank">Open Lab ↗</a>` : ''}
       </div>
-    </div>
-  `;
+    </div>`;
 
   labDetailEl = detail;
 
-  // Insert after the row containing the clicked card
-  const card = cards[i];
   const gridStyle = window.getComputedStyle(grid);
   const cols = gridStyle.gridTemplateColumns.split(' ').length;
   const row = Math.floor(i / cols);
   const lastInRow = Math.min((row + 1) * cols, cards.length) - 1;
 
-  if (cards[lastInRow].nextSibling) {
+  if (cards[lastInRow] && cards[lastInRow].nextSibling) {
     grid.insertBefore(detail, cards[lastInRow].nextSibling);
   } else {
     grid.appendChild(detail);
   }
-
   detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-/* ── CERTIFICATE CAROUSEL ── */
-(function() {
+/* ════════════════════════════════════════
+   CERTIFICATE CAROUSEL
+════════════════════════════════════════ */
+let carouselCurrent = 0;
+let carouselAuto;
+
+function initCarousel() {
+  carouselCurrent = 0;
+  clearInterval(carouselAuto);
+
   const track = document.getElementById('certTrack');
   const dotsContainer = document.getElementById('certDots');
   const cards = track.querySelectorAll('.cert-card');
-  let current = 0;
-  let autoTimer;
 
   function getPerPage() {
     return window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
   }
-
   function getTotal() {
     return Math.ceil(cards.length / getPerPage());
   }
-
   function buildDots() {
     dotsContainer.innerHTML = '';
     for (let i = 0; i < getTotal(); i++) {
       const d = document.createElement('div');
-      d.className = 'dot' + (i === current ? ' active' : '');
+      d.className = 'dot' + (i === carouselCurrent ? ' active' : '');
       d.onclick = () => goTo(i);
       dotsContainer.appendChild(d);
     }
   }
-
   function goTo(n) {
     const total = getTotal();
-    current = (n + total) % total;
+    if (total === 0) return;
+    carouselCurrent = (n + total) % total;
     const perPage = getPerPage();
     const cardWidth = track.parentElement.offsetWidth / perPage;
-    track.style.transform = `translateX(-${current * cardWidth * perPage + current * 24}px)`;
+    track.style.transform = `translateX(-${carouselCurrent * cardWidth * perPage + carouselCurrent * 24}px)`;
     buildDots();
     resetAuto();
   }
-
   function resetAuto() {
-    clearInterval(autoTimer);
-    autoTimer = setInterval(() => goTo(current + 1), 3500);
+    clearInterval(carouselAuto);
+    carouselAuto = setInterval(() => goTo(carouselCurrent + 1), 3500);
   }
 
-  document.getElementById('certPrev').onclick = () => goTo(current - 1);
-  document.getElementById('certNext').onclick = () => goTo(current + 1);
-
-  window.addEventListener('resize', () => { current = 0; buildDots(); goTo(0); });
+  document.getElementById('certPrev').onclick = () => goTo(carouselCurrent - 1);
+  document.getElementById('certNext').onclick = () => goTo(carouselCurrent + 1);
+  window._carouselGoTo = goTo;
 
   buildDots();
   resetAuto();
-})();
+}
 
-/* ── FADE IN ON SCROLL ── */
-const fadeEls = document.querySelectorAll('.fade-in');
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }});
-}, { threshold: 0.1 });
-fadeEls.forEach(el => io.observe(el));
-/* ── LIGHTBOX ── */
+window.addEventListener('resize', () => {
+  if (window._carouselGoTo) window._carouselGoTo(0);
+});
+
+/* ════════════════════════════════════════
+   LIGHTBOX
+════════════════════════════════════════ */
 function openLightbox(wrap) {
   const img = wrap.querySelector('img');
-  if (!img) return; // no image to show if only emoji placeholder
+  if (!img) return;
   document.getElementById('lightboxImg').src = img.src;
   document.getElementById('lightbox').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1328,17 +996,50 @@ function closeLightbox(e) {
   document.getElementById('lightbox').classList.remove('active');
   document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox({target: document.getElementById('lightbox')}); }});
-/* ── ACTIVE NAV HIGHLIGHT ── */
-const sections = document.querySelectorAll('section[id]');
+
+/* ════════════════════════════════════════
+   ESCAPE KEY
+════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeLightbox({ target: document.getElementById('lightbox') });
+  }
+});
+
+/* ════════════════════════════════════════
+   FADE IN ON SCROLL
+════════════════════════════════════════ */
+function initFadeIn() {
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  fadeEls.forEach(el => io.observe(el));
+}
+
+/* ════════════════════════════════════════
+   ACTIVE NAV HIGHLIGHT
+════════════════════════════════════════ */
+const navSections = document.querySelectorAll('section[id]');
 window.addEventListener('scroll', () => {
   let cur = '';
-  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+  navSections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
   document.querySelectorAll('.nav-links a').forEach(a => {
     a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--accent)' : '';
   });
 });
+
+/* ════════════════════════════════════════
+   BOOT — render everything from localStorage
+════════════════════════════════════════ */
+renderStatPills();
+renderCerts();
+renderProjects();
+renderLabs();
+initFadeIn();
 </script>
 </body>
 </html>
-
